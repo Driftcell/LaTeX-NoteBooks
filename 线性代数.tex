@@ -1,0 +1,2361 @@
+\documentclass[12pt, a4paper, oneside]{ctexbook}
+\usepackage{amsmath, amsthm, amssymb, bm, graphicx, hyperref, mathrsfs, rotating}
+
+\title{{\Huge{\textbf{线性代数从入门到放弃}}}}
+\author{傅子骏}
+\date{\today}
+\linespread{1.5}
+
+\newtheorem{theorem}{定理}[section]
+\newtheorem{definition}[theorem]{定义}
+\newtheorem{corollary}[theorem]{推论}
+\newtheorem{example}[theorem]{例}
+\newtheorem{quolity}[theorem]{性质}
+
+\begin{document}
+
+\maketitle
+
+\pagenumbering{roman}
+\setcounter{page}{1}
+
+\begin{center}
+    \Huge\textbf{前言}
+\end{center}
+
+
+本笔记基于宋浩惊叹号《线性代数》视频板书以及个人理解编写而成，并加入历年浙江理工大学线性代数A部分练习题. 
+
+
+希望能够巩固所学，当然如果能够完成本笔记的电子稿编写并且编译发行，也希望能够对大家学习线性代数有所帮助！ 
+
+
+最后感谢郑同学在暑假里对我学习的监督，正是如此，我才能够坚持完成线性代数的学习，忠心感谢！ 
+\newline
+\begin{flushright}
+    \begin{tabular}{c}
+        傅子骏 \\ \today
+    \end{tabular}
+\end{flushright}
+
+\newpage
+\pagenumbering{Roman}
+\setcounter{page}{1}
+\tableofcontents
+
+\newpage
+\setcounter{page}{1}
+\pagenumbering{arabic}
+
+\chapter{行列式}
+
+\section{初识行列式}
+\begin{definition}
+    行列式是由包含$n^2$个数$(a_{ij}(i,j = 1,2,\dots,n))$形成的方阵，称为$n$阶行列式，记作$D$，形式如
+    $$D=\left | \begin{matrix}
+        a_{11} & a_{12} & \cdots & a_{1n} \\
+        a_{21} & a_{22} & \cdots & a_{2n} \\
+        \vdots & \vdots & \ddots & \vdots \\
+        a_{n1} & \cdots & \cdots & a_{nn}
+    \end{matrix} \right |$$
+\end{definition}
+
+从本质上来说，行列数是个数。将行列式的值计算出来的方法有\textbf{画线展开}、\textbf{按行展开}、\textbf{按列展开}，下面将依次介绍并给出示例. 
+
+
+对于$n \le 3$阶行列式而言，可以使用画线展开方法直接计算，先从以下例题感受低阶行列式值的计算. 
+\begin{example}
+    计算行列式$D=\left | \begin{matrix}
+        1
+    \end{matrix} \right |$的值
+    \newline
+    解: $\mbox{原式}=1$
+\end{example}
+
+\begin{example}
+    计算行列式$D=\left | \begin{matrix}
+        1 & 2 \\
+        3 & 4
+    \end{matrix} \right |$的值
+    \newline
+    解: $\mbox{原式}=1 \times 4 - 2 \times 3 = -1$
+\end{example}
+
+\begin{example}
+    计算行列式$D=\left | \begin{matrix}
+        1 & 2 & 3 \\
+        4 & 5 & 6 \\
+        7 & 8 & 9
+    \end{matrix} \right |$的值
+    \newline
+    解: $\mbox{原式}=1 \times 5 \times 9 + 4 \times 8 \times 3 + 2 \times 6 \times 7 - 3 \times 5 \times 7 - 2 \times 4 \times 9 - 6 \times 8 \times 1=0$
+\end{example}
+
+由以上例题不难看出，1阶行列式的值即为其包含元素本身，2阶行列式的值为\textbf{主对角线}之积减去\textbf{次对角线}之积，而3阶行列式稍显复杂.
+
+
+3阶行列式共有6项，3项为正，3项为负. 沿主对角线画一条直线，经过``1 5 9''，符号为正，将直线往上或往下平移得到``2 6''和``4 8''，前者还需乘上距离直线最远的元素``7''，对应地，后者为``3''. 
+再使用相同方法，沿次对角线画直线，取得``3 5 7''，往上平移得到``2 4''和``6 8''，前者再乘上``9''，后者乘上``1''，最终6项元素相加即为3阶行列式的值. 
+
+
+由此可见，3阶行列式可以通过画线的方法计算其值，但部分时候并不是很方便，于是我们引入按行(列)展开的方法. 但在此之前，我们需要学习一些前置知识
+
+\subsection{排列与逆序数}
+\begin{definition}
+    由$1,2,\dots,n$组成的\textbf{有序}数列称为$n$级排列.
+\end{definition}
+
+\begin{definition}
+    所有元素均由小到大升序的排列称为\textbf{自然排列}. 
+\end{definition}
+
+注意到\textbf{有序}两字，其实这里说的有序是指1 \dots n之间无空缺任何数字的意思. 
+
+\begin{example}
+    3级排列有
+    $\begin{cases}
+        1, 2, 3 \\
+        1, 3, 2 \\
+        2, 3, 1 \\
+        2, 1, 3 \\
+        3, 1, 2 \\
+        3, 2, 1    
+    \end{cases}$共6种组合
+\end{example}
+
+不难看出，n级排列共有$\prod_{i=1}^n = n!$种组合
+
+\begin{definition}
+    对于n个不同的元素，先规定各元素之间有一个标准次序，于是在这n个元素的任一排列中，当某两个元素的先后次序与标准次序不同时，就说有1个逆序，逆序的总数即为逆序数，记作$N(1 \dots n)$. 
+    当N为偶数时，该排列称为偶排列，当N为奇数时，称为奇排列. 
+\end{definition}
+
+\begin{example}
+    分别求$1, 2, 3, 4, 5\mbox{、}1, 2, 4, 3, 5\mbox{以及}5, 4, 3, 2, 1\mbox{的逆序数}$
+
+
+    解: 
+    $$N(1, 2, 3, 4, 5) = 0$$
+    $$N(1, 2, 4, 3, 5) = 1$$
+    ``4, 3''构成1对逆序
+    $$N(5, 4, 3, 2, 1) = 10$$
+    ``5, 4''、``5, 3''、``5, 2'' \dots ``2, 1''构成10对逆序
+\end{example}
+
+\begin{corollary}
+    若排列为完全逆序，不难看出逆序数的个数为
+    $$\sum_{i=1}^{n-1} = 1 + 2 + \dots + (n-1) = \frac{n(n-1)}{2}$$
+\end{corollary}
+
+\section{行列式按行展开}
+观察下列行列式展开式中行标与列标的值的变化. 
+
+
+$$D=\left | \begin{matrix}
+    a_{11} & a_{12} & a_{13} \\
+    a_{21} & a_{22} & a_{23} \\
+    a_{31} & a_{32} & a_{33}
+\end{matrix} \right |$$
+\begin{align}
+    = a_{11} \times a_{22} \times a_{33} + a_{12} \times a_{23} \times a_{31} + a_{13} \times a_{21} \times a_{32} \notag \\
+    - a_{13} \times a_{22} \times a_{31} - a_{12} \times a_{21} \times a_{33} - a_{11} \times a_{23} \times a_{32} \notag
+\end{align}
+
+不难看出所有的行标均为3级自然排列，即``1, 2, 3''，而列标取3级排列的组合，前面的符号由逆序数的奇偶性决定，奇数为正，偶数为负.
+
+$$\begin{cases}
+    N(1, 2, 3) = 0\mbox{，偶数，符号为正} \\
+    N(2, 3, 1) = 2\mbox{，偶数，符号为正} \\
+    N(3, 1, 2) = 2\mbox{，偶数，符号为正} \\
+    N(3, 2, 1) = 3\mbox{，奇数，符号为负} \\
+    N(2, 1, 3) = 1\mbox{，奇数，符号为负} \\
+    N(1, 3, 2) = 1\mbox{，奇数，符号为负}
+\end{cases}$$
+我们不妨逐个验证一下，发现完成符合上述情况，下面我们可以给出$n$阶行列式按行展开的完整定义.
+
+\begin{theorem}
+    $n$阶行列式
+    $$D=\left | \begin{matrix}
+        a_{11} & a_{12} & \cdots & a_{1n} \\
+        a_{21} & a_{22} & \cdots & a_{2n} \\
+        \cdots & \cdots & \ddots & \cdots \\
+        a_{n1} & \cdots & \cdots & a_{nn}
+    \end{matrix} \right |$$
+    $$=\sum_{j_1 j_2 \dots j_n}(a_{1j_{1}} \times a_{2j_{2}} \dots a_{nj_{n}}) \times (-1)^{N(j_1 j_2 \dots j_n)}$$
+    其中$\sum_{j_1 j_2 \dots j_n}$意为取n级排列所有可能. 
+\end{theorem}
+
+如果我们重新排列列标，使其升序，在观察行标，同理可以推得按列展开的计算式，在此略过. 
+
+
+但是，如果我们完全打乱行标和列标，刚如何确定每项的正负号呢，下面将给出既不按行也不按列展开的行列式的值的计算. 
+对于n阶行列式，其值为: 
+$$\sum_{\substack{i_1i_2 \dots i_n \\ j_1j_2 \dots j_n}}a_{i_1j_1}a_{i_2j_2} \dots a_{i_nj_n} \times (-1)^{N(i_1i_2 \dots i_n) + N(j_1j_2 \dots j_n)}$$
+
+\section{一些特殊的行列式}
+
+\subsection{下三角行列式}
+沿主对角线，上方元素全为0的行列式称为下三角行列式，其值为主对角线元素之积. 
+$$\left | \begin{matrix}
+    a_{11} & 0      & 0      & \cdots & 0 \\
+    a_{21} & a_{22} & 0      & \cdots & 0 \\
+    a_{31} & a_{32} & a_{33} & \cdots & 0 \\
+    \vdots & \vdots & \vdots & \ddots & \vdots \\
+    a_{n1} & a_{n2} & \cdots & \cdots & a_{nn}
+\end{matrix} \right | = \prod_{i=1}^{n}a_{ii} = a_{11} \times a_{22} \times \dots \times a_{nn}$$
+
+\subsection{上三角行列式}
+沿主对角线，下方元素全为0的行列式称为上三角行列式，其值为主对角线元素之积. 
+$$\left | \begin{matrix}
+    a_{11} & a_{12} & a_{13} & \cdots & a_{1n} \\
+    0      & a_{22} & a_{23} & \cdots & a_{2n} \\
+    0      & 0      & a_{33} & \cdots & a_{3n} \\
+    \vdots & \vdots & \vdots & \ddots & \vdots \\
+    0      & 0      & \cdots & \cdots & a_{nn}
+\end{matrix} \right | = \prod_{i=1}^{n}a_{ii} = a_{11} \times a_{22} \times \dots \times a_{nn}$$
+
+\subsection{对角形行列式}
+沿主对角线，上下方元素全为0的行列式称为对角形行列式，其值为主对角线元素之积. 
+$$\left | \begin{matrix}
+    a_{11} & 0      & 0      & \cdots & 0 \\
+    0      & a_{22} & 0      & \cdots & 0 \\
+    0      & 0      & a_{33} & \cdots & 0 \\
+    \vdots & \vdots & \vdots & \ddots & \vdots \\
+    0      & 0      & \cdots & \cdots & a_{nn}
+\end{matrix} \right | = \prod_{i=1}^{n}a_{ii} = a_{11} \times a_{22} \times \dots \times a_{nn}$$
+
+除了沿主对角线的上三角、下三角、对角形行列式之外，还有沿次对角线的上三角、下三角、对角形行列式，计算方法只有符号上的区别，在此列举一个，其余同理. 
+\subsection{次对角线 - 对角形行列式}
+沿主对角线，上下方元素全为0的行列式称为对角形行列式，其值为主对角线元素之积. 
+$$\left | \begin{matrix}
+    0      & 0      & 0        & \cdots   & a_{1n} \\
+    0      & 0      & \cdots   & a_{2n-1} & 0 \\
+    0      & \cdots & a_{3n-2} & \cdots   & 0 \\
+    \cdots & \begin{rotate}{90} $\ddots$ \end{rotate} & \cdots & \cdots & \cdots \\
+    a_{n1} & 0      & \cdots & \cdots & 0
+\end{matrix} \right | = \prod_{i=1}^{n}a_{i(n-i+1)} = a_{1n} \times a_{2n-1} \times \dots \times a_{n1} \times (-1)^{N(n \dots 1)}$$
+$$\mbox{其中}N(n \dots 1) = \frac{n(n-1)}{2}$$
+
+
+与主对角线版本的行列式对角相乘不同，次对角线版本的行列式需要乘上$(-1)^{N(n \dots 1)}$. 
+
+\section{行列式的性质}
+\subsection{转置}
+
+\begin{definition}
+    将行列式的行列进行交换的操作称为转置，$D$的转置记作$D^T$. 
+\end{definition}
+
+\begin{example}
+    假设$D=\left | \begin{matrix}
+        1 & 2 & 3 \\
+        4 & 5 & 6 \\
+        7 & 8 & 9
+    \end{matrix} \right |$，则$D^T$ = $\left | \begin{matrix}
+        1 & 4 & 7 \\
+        2 & 5 & 8 \\
+        3 & 6 & 9
+    \end{matrix} \right |$
+\end{example}
+
+\subsection{行列式转置的性质}
+
+\begin{quolity}
+    行列式转置后值不变. 
+\end{quolity}
+
+\begin{quolity}
+    $(D^T)^T = D$
+\end{quolity}
+
+\subsection{行列式行列变换的性质}
+
+\begin{quolity}
+    任意交换行列式某两行或某两列，行列式的值变号. 
+\end{quolity}
+
+\begin{example}
+    假设$D=\left | \begin{matrix}
+        1 & 2 \\
+        3 & 4
+    \end{matrix} \right |$，其值为$1 \times 4 - 2 \times 3 = -1$，
+    交换1、2行后，$D=\left | \begin{matrix}
+        3 & 4 \\
+        1 & 2
+    \end{matrix} \right |$，其值为$2 \times 6 - 4 \times 1 = 1$. 
+\end{example}
+
+\begin{quolity}
+    行列式某行或某列乘上k，相当于对行列式的值乘上k. 
+\end{quolity}
+
+\begin{example}
+    假设$D=\left | \begin{matrix}
+        1 & 2 & 3 \\
+        4 & 5 & 6 \\
+        7 & 8 & 9
+    \end{matrix} \right |$，第2行乘上k后行列式变为$D=\left | \begin{matrix}
+        1  & 2  & 3 \\
+        4k & 5k & 6k \\
+        7  & 8  & 9
+    \end{matrix} \right |$，行列式的值为kD. 
+\end{example}
+
+\begin{example}
+    对D每行乘上k后$=\left | \begin{matrix}
+        1k & 2k & 3k \\
+        4k & 5k & 6k \\
+        7k & 8k & 9k
+    \end{matrix} \right |$，即每行k均可提取公因子，共提取三次行列式的值为$k \times k \times k \times D = k^3D$. 
+\end{example}
+
+\begin{quolity}
+    将行列式的某行或某列乘上k$(k \in \mathbb{R})$再加到另一行上去，行列式的值不变. 
+\end{quolity}
+
+\begin{example}
+    假设$D=\left | \begin{matrix}
+        1 & 2 & 3 \\
+        4 & 5 & 6 \\
+        7 & 8 & 9
+    \end{matrix} \right |$，第1行乘上-1加到第二行后$D'=\left | \begin{matrix}
+        1 & 2 & 3 \\
+        3 & 3 & 3 \\
+        7 & 8 & 9
+    \end{matrix} \right |$，其值$D'=D=0$
+\end{example}
+
+\begin{example}
+    计算$\left | \begin{matrix}
+        1 & 2  & 0  & 1 \\
+        2 & 3  & 10 & 0 \\
+        0 & 3  & 5  & 18 \\
+        5 & 10 & 15 & 4
+    \end{matrix} \right |$
+    \newline
+    解: $\mbox{原式} \xrightarrow{\mbox{第1行处理2、3行}} \left | \begin{matrix}
+        1 & 2  & 0  & 1 \\
+        0 & -1 & 10 & -2 \\
+        0 & 3  & 5  & 18 \\
+        0 & 0  & 15 & -1 \\
+    \end{matrix} \right | \xrightarrow{\mbox{第2行处理3、4行}} \left | \begin{matrix}
+        1 & 2  & 0  & 1 \\
+        0 & -1 & 10 & -2 \\
+        0 & 0  & 35 & 12 \\
+        0 & 0  & 0  & -\frac{43}{7}
+    \end{matrix} \right | = 1 \times -1 \times 35 \times -\frac{43}{7} = 215$
+\end{example}
+
+由该例题可看出，计算行列式的值可以将行列式转换为上三角行列式，从而累积主对角线元素值快速得到问题的解. 
+
+\begin{quolity}
+    若行列式的某两行或某两列成比例，则行列式的值为0. 
+\end{quolity}
+
+\begin{quolity}
+    若行列式的某行或某列元素全为0，则行列式的值为0. 
+\end{quolity}
+
+\begin{quolity}
+    若行列式的某行或某列可以写成两数之和，则该行列式可以拆分为两个行列式. 
+\end{quolity}
+
+\begin{example}
+    假设$D=\left | \begin{matrix}
+        1   & 2   & 3   \\
+        2+2 & 2+3 & 2+4 \\
+        7   & 8   & 9
+    \end{matrix} \right |$，D亦可写作
+    $\left | \begin{matrix}
+        1   & 2   & 3 \\
+        2   & 2   & 2 \\
+        7   & 8   & 9
+    \end{matrix} \right | + \left | \begin{matrix}
+        1   & 2   & 3 \\
+        2   & 3   & 4 \\
+        7   & 8   & 9
+    \end{matrix} \right |$
+\end{example}
+注意，拆分时，每行(列)操作一次拆分为2个行列式的和，如果拆分3行，则结果为8个行列式相加. 
+
+\begin{quolity}
+    上述所有性质对行成立，对列同样也成立. 
+\end{quolity}
+
+\section{行列式的计算}
+
+\subsection{余子式以及代数余子式}
+
+\begin{definition}
+    将行列式某元素所在\textbf{行}与\textbf{列}去除以后剩下的子行列式称为余子式，记作$M_{ij}$. 
+\end{definition}
+
+\begin{definition}
+    $(-1)^{i+j}M_{ij}$称为代数余子式，记作$A_{ij}$. 
+\end{definition}
+需要注意，无论是余子式还是代数余子式，其本质仍是个数. 
+
+
+就目前而言，几乎所有的题目都是围绕代数余子式展开的，因为代数余子式存在下面有趣的性质，若题目中给出余子式，要考虑将其转换为代数余子式. 
+
+\begin{quolity}
+    $D=a_{i1}A_{i1} + a_{i2}A_{i2} + \cdots + a_{in}A_{in}$
+\end{quolity}
+$a_{ij}$表示行列式中第$i$行第$j$列的元素，上式中，$i$是个定值，表示行列式按某行进行了展开，列标取$1 \dots n$. 
+
+\begin{example}
+    求$\left | \begin{matrix}
+        1   & 2   & 3 \\
+        2   & 2   & 2 \\
+        7   & 8   & 9
+    \end{matrix} \right |$的余子式$M_{22}$以及代数余子式$A_{31}$. 
+    \newline
+    解: $$M_{22} = \left | \begin{matrix}
+        1 & 3 \\
+        7 & 9
+    \end{matrix} \right | = 1 \times 9 - 3 \times 7 = 9 - 21 = -12$$
+    \newline
+    $$A_{31} = \left | \begin{matrix}
+        2 & 3 \\
+        2 & 2
+    \end{matrix} \right | = 2 \times 2 - 2 \times 3 = 4 - 6 = -2$$
+\end{example}
+
+\begin{example}
+    求行列式$D=\left | \begin{matrix}
+        1 & 1 & 2 \\
+        0 & 1 & 0 \\
+        2 & 3 & 5
+    \end{matrix} \right |$的值. 
+    \newline
+    解: 注意到第二行为``0 1 0''，按照第二行展开会比直接算容易些. 
+    $$D=(-1)^{2 + 2} \times \left | \begin{matrix}
+        1 & 2 \\
+        2 & 5
+    \end{matrix} \right | = 1 \times 5 - 2 \times 2 = 5 - 4 = 1$$
+\end{example}
+
+如果行列式中某行或某列的``0''较多，不妨将行(列)简化行列式的计算. 
+
+\begin{quolity}
+    异乘变零，如果将某行或列的代数余子式乘上另一行或列的元素，所得的值为0. 
+\end{quolity}
+
+\begin{example}
+    $D=\left | \begin{matrix}
+        1   & 2   & 3 \\
+        2   & 2   & 2 \\
+        7   & 8   & 9
+    \end{matrix} \right |$，用第1行的代数余子式与第3行相乘，相当于在求$\left | \begin{matrix}
+        7 & 8 & 9 \\
+        2 & 2 & 2 \\
+        7 & 8 & 9
+    \end{matrix} \right |$，行列式中两行相同，行列式值为0. 
+\end{example}
+
+\subsection{拉普拉斯定理}
+为了介绍拉普拉斯定理，我们还需引入n阶子式以及其余子式的概念. 
+$$D=\left | \begin{matrix}
+    a_{11}   & a_{12}   & a_{13} & a_{14} \\
+    a_{21}   & a_{22}   & a_{23} & a_{24} \\
+    a_{31}   & a_{32}   & a_{33} & a_{34} \\
+    a_{41}   & a_{42}   & a_{43} & a_{44}
+\end{matrix} \right |$$
+我们取前两行以及前两列构成2阶子式$\left | \begin{matrix}
+    a_{11} & a_{12} \\
+    a_{21} & a_{22}
+\end{matrix} \right |$，以及其余子式$\left | \begin{matrix}
+    a_{33} & a_{34} \\
+    a_{43} & a_{44}
+\end{matrix} \right |$.
+拉普拉斯定理表明了$\left | \begin{matrix}
+    a_{11} & a_{12} \\
+    a_{21} & a_{22}
+\end{matrix} \right | \times (-1)^{1 + 2 + 1 + 2} \times \left | \begin{matrix}
+    a_{33} & a_{34} \\
+    a_{43} & a_{44}
+\end{matrix} \right | = 0$
+
+\begin{theorem}
+    n阶行列式中，取定k行，由k行元素构成的所有k阶子式与代数余子式的乘积为0. 
+\end{theorem}
+
+\subsection{行列式相乘}
+
+我们先从例题直观地感受一下行列式相乘，事实上，行列式相乘与矩阵乘法的计算逻辑是相同的，均为左边行列式(矩阵)的行与右边行列式(矩阵)的列对应元素相乘再相加得到. 
+
+\begin{example}
+    $\left | \begin{matrix}
+        1 & 2 & 1 \\
+        2 & 1 & 1 \\
+        1 & 1 & 2
+    \end{matrix} \right | \times \left | \begin{matrix}
+        1 & 0 & 2 \\
+        0 & 1 & 0 \\
+        2 & 0 & 1
+    \end{matrix} \right | = \left | \begin{matrix}
+        1+2 & 2 & 2+1 \\
+        2+2 & 1 & 4+1 \\
+        1+4 & 1 & 2+2
+    \end{matrix} \right | = \left | \begin{matrix}
+        3 & 2 & 3 \\
+        4 & 1 & 5 \\
+        5 & 1 & 4
+    \end{matrix} \right |$
+\end{example}
+
+设左乘行列式为$A$，右乘行列式为$B$，结果行列式为$R$，细心的读者应该不难发现，计算结果中$r_{11}$的值为左边行列式第1行中``1 2 1'''与右边行列式第1列中``1 0 2''对应元素相乘再相加得到. 
+同理$r_{12}$的结果由左边行列式第1行``1 2 1''与右边行列式第2列中``0 1 0''对应相乘再相加得到，其余元素同理. 由以下式子可以描述结果行列式中各元素的值. 
+$$r_{ij} = \sum_{k=1}^na_{ik} \times b_{kj}$$
+
+\subsection{特殊行列式的计算 - 1}
+
+考虑以下行列式，你有办法快速计算出该行列式的值嘛？
+$$\left | \begin{matrix}
+    x & a & a & \cdots & a \\
+    a & x & a & \cdots & a \\
+    a & a & x & \cdots & a \\
+    \cdots & \cdots & \cdots & \ddots & \cdots \\
+    a & a & a & \cdots & x
+\end{matrix} \right |$$
+面对诸如此类的行列式，我们应该想到如何去构造三角行列式，进而累积主对角线元素从而解决问题. 这种行列式有固定的技巧，第一步即制造行和. 
+$$\left | \begin{matrix}
+    x & a & a & \cdots & a \\
+    a & x & a & \cdots & a \\
+    a & a & x & \cdots & a \\
+    \cdots & \cdots & \cdots & \ddots & \cdots \\
+    a & a & a & \cdots & x
+\end{matrix} \right | \xrightarrow{\mbox{将2 \dots n列加到第1列}} \left | \begin{matrix}
+    (n-1)a+x & a & a & \cdots & a \\
+    (n-1)a+x & x & a & \cdots & a \\
+    (n-1)a+x & a & x & \cdots & a \\
+    \cdots & \cdots & \cdots & \ddots & \cdots \\
+    (n-1)a+x & a & a & \cdots & x
+\end{matrix} \right |$$
+可以看到第1列有共同的公因子$(n-1)a+x$，提出为$((n-1)a+x)^n$，从而使第1列元素为1. 
+$$\left | \begin{matrix}
+    (n-1)a+x & a & a & \cdots & a \\
+    (n-1)a+x & x & a & \cdots & a \\
+    (n-1)a+x & a & x & \cdots & a \\
+    \cdots & \cdots & \cdots & \ddots & \cdots \\
+    (n-1)a+x & a & a & \cdots & x
+\end{matrix} \right | \xrightarrow{\mbox{提出公因子}} ((n-1)a+x)^n \times \left | \begin{matrix}
+    1 & a & a & \cdots & a \\
+    1 & x & a & \cdots & a \\
+    1 & a & x & \cdots & a \\
+    \cdots & \cdots & \cdots & \ddots & \cdots \\
+    1 & a & a & \cdots & x 
+\end{matrix} \right |$$
+根据性质: 行列式的某行或某列乘上k加到另外某行或某列，行列式的值不变. 我们将第一列乘上$-a$，从而消去第1列右侧的所有$a$. 
+$$\left | \begin{matrix}
+    1 & a & a & \cdots & a \\
+    1 & x & a & \cdots & a \\
+    1 & a & x & \cdots & a \\
+    \cdots & \cdots & \cdots & \ddots & \cdots \\
+    1 & a & a & \cdots & x
+\end{matrix} \right | \xrightarrow[\mbox{加到其余列上去}]{\mbox{第1列乘-a}} ((n-1)a+x)^n \times \left | \begin{matrix}
+    1 & 0   & 0   & \cdots & 0 \\
+    1 & x-a & 0   & \cdots & 0 \\
+    1 & 0   & x-a & \cdots & 0 \\
+    \cdots & \cdots & \cdots & \ddots & \cdots \\
+    1 & 0   & 0   & \cdots & x-a 
+\end{matrix} \right |$$
+此处已经很明显地可以看出，行列式已经转化为了下三角形，其结果为$$\prod_{i=1}^{n-1}(x-a) = (x-a)^{n-1}$$
+
+\subsection{特殊行列式的计算 - 2}
+
+考虑以下行列式. 
+$$\left | \begin{matrix}
+    1+a_1 & 1 & 1 & \cdots & 1 \\
+    1 & 1+a_2 & 1 & \cdots & 1 \\
+    1 & 1 & 1+a_3 & \cdots & 1 \\
+    \cdots & \cdots & \cdots & \ddots & \cdots \\
+    1 & 1 & 1 & \cdots & 1+a_n
+\end{matrix} \right |$$
+我们可以采取加边的操作，在原行列式的上方加$(n+1)$个``1''，在左边加$n$个``0''，加边操作后行列式的值不变，想知道为什么嘛. 
+$$\left | \begin{matrix}
+    1 & 1 & 1 & 1 & \cdots & 1 \\
+    0 & 1+a_1 & 1 & 1 & \cdots & 1 \\
+    0 & 1 & 1+a_2 & 1 & \cdots & 1 \\
+    0 & 1 & 1 & 1+a_3 & \cdots & 1 \\
+    0 & \cdots & \cdots & \cdots & \ddots & \cdots \\
+    0 & 1 & 1 & 1 & \cdots & 1+a_n
+\end{matrix} \right |$$
+第1行乘上-1加到剩余行，产生以下行列式，该形状的行列式称为\textbf{三叉形}行列式. 
+$$\left | \begin{matrix}
+    1 & 1 & 1 & 1 & \cdots & 1 \\
+    -1 & a_1 & 0 & 0 & \cdots & 0 \\
+    -1 & 0 & a_2 & 0 & \cdots & 0 \\
+    -1 & 0 & 0 & a_3 & \cdots & 0 \\
+    -1 & \cdots & \cdots & \cdots & \ddots & \cdots \\
+    -1 & 0 & 0 & 0 & \cdots & a_n
+\end{matrix} \right |$$
+针对该种行列式，也有固定的技巧，将第一列的``-1''消去，行列式就能转换为上三角形，那么该怎么操作呢？将第2列乘上$-\frac{1}{a_1}$加到第1列，消去第2行第1个-1，将第3列乘上$-\frac{1}{a_2}$加到第1列，消去第3行第1个-1，剩下的依次处理，最后行列式为.
+$$\left | \begin{matrix}
+    1 + \frac{1}{a_1} + \frac{1}{a_2} + \dots + \frac{1}{a_n} & 1 & 1 & 1 & \cdots & 1 \\
+    0 & a_1 & 0 & 0 & \cdots & 0 \\
+    0 & 0 & a_2 & 0 & \cdots & 0 \\
+    0 & 0 & 0 & a_3 & \cdots & 0 \\
+    0 & \cdots & \cdots & \cdots & \ddots & \cdots \\
+    0 & 0 & 0 & 0 & \cdots & a_n
+\end{matrix} \right | = (1 + \frac{1}{a_1} + \frac{1}{a_2} + \dots + \frac{1}{a_n})(a_1a_2 \dots a_n)$$
+
+\subsection{特殊行列式的计算 - 3}
+
+$$\left | \begin{matrix}
+    1 & 1 & 1 & \cdots & 1 \\
+    x_1 & x_2 & x_3 & \cdots & x_n \\
+    \cdots & \cdots & \cdots & \cdots & \cdots & \cdots \\
+    x_1^{n-2} & x_2^{n-2} & x_3^{n-2} & \cdots & x_n^{n-2} \\
+    x_1^{n-1} & x_2^{n-1} & x_3^{n-1} & \cdots & x_n^{n-1} \\
+\end{matrix} \right | = \prod_{i \le j < i \le n}(x_i - x_j)$$
+
+\begin{example}
+    $\left | \begin{matrix}
+        1 & 1 & 1 & 1 & 1 \\
+        x_1 & x_2 & x_3 & x_4 & x_5 \\
+        x_1^2 & x_2^2 & x_3^2 & x_4^2 & x_5^2 \\
+        x_1^3 & x_2^3 & x_3^3 & x_4^3 & x_5^3 \\
+        x_1^4 & x_2^4 & x_3^4 & x_4^4 & x_5^4
+    \end{matrix} \right |$
+    $\begin{aligned}
+        =&(x_5-x_4)(x_5-x_3)(x_5-x_2)(x_5-x_1) \\
+        & (x_4-x_3)(x_4-x_2)(x_4-x_1) \\
+        & (x_3-x_2)(x_3-x_1) \\
+        & (x_2-x_1)
+    \end{aligned}$
+\end{example}
+此类题型都是固定的，考试时不会直接考虑你行列式符合上述定义，需要自己转换，例如. 
+$$\left | \begin{matrix}
+    1 & 1  & 1 & 1 \\
+    1 & -1 & 2 & 3 \\
+    1 & 1  & 4 & 9 \\
+    1 & -1 & 8 & 27
+\end{matrix} \right |$$
+
+\subsection{反对称行列式}
+\begin{definition}
+    反对称行列式为主对角线全为0，上下位置元素对应成相反数，即$a_{ij} = -a_{ji}$. 
+\end{definition}
+因为各元素均需满足$a_{ij} = -a_{ji}$，主对角线上亦是如此，需满足$a_{ii} = -a_{ii}$，当且仅当$a_{ii} = 0$时成立. 
+
+\begin{corollary}
+    当行列式为反对称行列式，且阶数为奇数时，该行列式的值为0. 
+\end{corollary}
+
+\begin{example}
+    $$D=\left | \begin{matrix}
+        0  & a  & b \\
+        -a & 0  & c \\
+        -b & -c & 0
+    \end{matrix} \right | = (-1)^3 \times \left | \begin{matrix}
+        0 & -a & -b \\
+        a & 0  & -c \\
+        b & c  & 0
+    \end{matrix} \right | = -D^T = -D$$
+    注意到$D=-D$，当且仅当$D=0$时成立. 
+\end{example}
+
+
+\subsection{对称行列式}
+\begin{definition}
+    对称行列式对主对角线元素没有要求，但要求$a_{ij} = a_{ji}$. 
+\end{definition}
+
+\chapter{矩阵}
+\section{矩阵的介绍}
+
+\begin{definition}
+    由$\left ( \begin{matrix}
+        a_{11} & a_{12} & \cdots & a_{1n} \\
+        a_{21} & a_{22} & \cdots & a_{2n} \\
+        \vdots & \vdots & \ddots & \vdots \\
+        a_{n1} & a_{n2} & \cdots & a_{nn}
+    \end{matrix} \right )$构成的数表称为矩阵. 
+\end{definition}
+
+矩阵相较于行列式不同点有三方面，第一，矩阵本质上是个数表，是一堆数字的集合，而行列式本质上是个数字；第二，矩阵的形状并无规定，而行列式的形状需为方形；第三，矩阵用一对括号或方括号表示，行列式用双竖线表示. 
+
+\begin{definition}
+    ~\\ % 空格为了解决There is no line to end问题. 
+    实矩阵: 所有元素均为实数的矩阵. 
+    \newline
+    行(列)矩阵: 只有一行(列)的矩阵. 
+    \newline
+    零矩阵: 所有元素均为0的矩阵. 
+    \newline
+    负矩阵: 原矩阵所有元素取相反数后的矩阵. 
+    \newline
+    $n$阶方阵: 形状为$n \times n$的矩阵. 
+    \newline
+    单位矩阵: 主对角线元素全为1的矩阵，记作$E$. 
+    \newline
+    同型矩阵: 两个矩阵的行数列数均相等称为同型矩阵，矩阵相同的前提是同型矩阵. 
+\end{definition}
+
+试问零矩阵一定是同型矩阵嘛？答案是No，零矩阵的形状并未规定. 
+
+
+\section{矩阵的运算}
+
+\subsection{矩阵的加减法}
+
+矩阵的加减法为同型矩阵对应元素相加减.
+
+\begin{example}
+    $$\left ( \begin{matrix}
+        1 & 1 & 1 \\
+        1 & 1 & 1
+    \end{matrix} \right ) + \left ( \begin{matrix}
+        0 & 2 & 3 \\
+        3 & 2 & 2
+    \end{matrix} \right ) = \left ( \begin{matrix}
+        1 & 3 & 4 \\
+        4 & 3 & 3
+    \end{matrix} \right )$$
+\end{example}
+
+\subsection{矩阵加减法的性质}
+
+\begin{quolity}
+    交换律: $A + B = B + A$
+\end{quolity}
+
+\begin{quolity}
+    结合律: $(A + B) + C = A + (B + C)$
+\end{quolity}
+
+\begin{quolity}
+    $A + 0 = A$
+\end{quolity}
+
+\begin{quolity}
+    $A + (-A) = 0$
+\end{quolity}
+
+\begin{quolity}
+    $A + B = C \Leftrightarrow A = C - B$
+\end{quolity}
+
+\subsection{矩阵的数乘}
+
+\begin{theorem}
+    $$k \times \left ( \begin{matrix}
+        a_{11} & a_{12} & \cdots & a_{1n} \\
+        a_{21} & a_{22} & \cdots & a_{2n} \\
+        \vdots & \vdots & \ddots & \vdots \\
+        a_{n1} & a_{n2} & \cdots & a_{nn}
+    \end{matrix} \right ) = \left ( \begin{matrix}
+        ka_{11} & ka_{12} & \cdots & ka_{1n} \\
+        ka_{21} & ka_{22} & \cdots & ka_{2n} \\
+        \vdots & \vdots & \ddots & \vdots \\
+        ka_{n1} & ka_{n2} & \cdots & ka_{nn}
+    \end{matrix} \right )$$
+\end{theorem}
+
+\subsection{矩阵的乘法}
+
+\begin{definition}
+    $$\left ( \begin{matrix}
+        a_{11} & a_{12} & \cdots & a_{1n} \\
+        a_{21} & a_{22} & \cdots & a_{2n} \\
+        \vdots & \vdots & \ddots & \vdots \\
+        a_{n1} & a_{n2} & \cdots & a_{nn}
+    \end{matrix} \right )_{m \times n} \times \left ( \begin{matrix}
+        b_{11} & b_{12} & \cdots & b_{1n} \\
+        b_{21} & b_{22} & \cdots & b_{2n} \\
+        \vdots & \vdots & \ddots & \vdots \\
+        b_{n1} & b_{n2} & \cdots & b_{nn}
+    \end{matrix} \right )_{n \times l} = \left ( \begin{matrix}
+        r_{11} & r_{12} & \cdots & r_{1n} \\
+        r_{21} & r_{22} & \cdots & r_{2n} \\
+        \vdots & \vdots & \ddots & \vdots \\
+        r_{n1} & r_{n2} & \cdots & r_{nn}
+    \end{matrix} \right )_{m \times l}$$
+    满足: $$r_{ij} = \sum_{k=1}^n a_{ik} \times b_{kj}$$
+\end{definition}
+
+矩阵的乘法用人话说，求$r_{11}$的值即取出左乘矩阵第1行，右乘矩阵第1列，对应相乘再相加得到. 不难发现，矩阵相乘需要满足左乘矩阵的列数等于右乘矩阵的行数的条件. 
+快速判断矩阵是否可以相乘，可以先写出两个矩阵的形状，假设左乘矩阵为$m \times n$，右乘矩阵为$n \times l$，则可相乘，最终得到的矩阵形状为$m \times l$. 
+
+\subsection{矩阵乘法的性质}
+
+\begin{quolity}
+    矩阵A与零矩阵相乘为相应形状的零矩阵. 
+    $$A_{m \times n} \times 0_{m \times l} = 0_{m \times l}$$
+\end{quolity}
+
+\begin{quolity}
+    矩阵$A$、$B$、$C$相乘，相乘顺序可交换. 
+    $$A \times B \times C = (A \times B) \times C = A \times (B \times C)$$
+\end{quolity}
+
+\begin{quolity}
+    矩阵$A$、$B$相乘，再乘上常数$k$，$k$的位置任意. 
+    $$k \times AB = (kA) \times B = A \times (kB)$$
+\end{quolity}
+
+\begin{quolity}
+    任何矩阵与同型单位矩阵相乘仍为自身. 
+    $$A = E \times A = A \times E$$
+\end{quolity}
+
+\subsection{矩阵的幂运算}
+
+\begin{definition}
+    设$A$为$n$阶矩阵，则$A^k = \overbrace{AAA \dots A}^{\mbox{共k个}}$
+\end{definition}
+
+\begin{example}
+    假设矩阵$A= \left ( \begin{matrix}
+        1 & 1 & 1
+    \end{matrix} \right )$，$B= \left ( \begin{matrix}
+        1 \\ 2 \\ 3
+    \end{matrix} \right )$，求$(AB)^10$. 
+    \newline
+    解: $AB = \left ( \begin{matrix}
+        1 & 1 & 1
+    \end{matrix} \right ) \left ( \begin{matrix}
+        1 \\ 2 \\ 3
+    \end{matrix} \right ) = 6$，$BA = \left ( \begin{matrix}
+        1 \\ 2 \\ 3
+    \end{matrix} \right ) \left ( \begin{matrix}
+        1 & 1 & 1
+    \end{matrix} \right ) = \left ( \begin{matrix}
+        1 & 1 & 1 \\
+        2 & 2 & 2 \\
+        3 & 3 & 3
+    \end{matrix} \right )$. 
+    \newline
+    $(AB)^{10} = \overbrace{ABAB \cdots AB}^{\mbox{共10个AB}} = A \times \overbrace{BABA \cdots BA}^{\mbox{共9个BA}} \times B$
+    已知$BA=6$，则$(BA)^9 = 6^9$，最终结果为$(AB)^10 = 6^9 \times \left ( \begin{matrix}
+        1 & 1 & 1 \\
+        2 & 2 & 2 \\
+        3 & 3 & 3
+    \end{matrix} \right )$
+\end{example}
+
+\subsection{矩阵幂运算的性质}
+
+\begin{quolity}
+    $A^{k_1} \times A^{k_2} = A^{k_1 + k_2}$
+\end{quolity}
+
+\begin{quolity}
+    $(A^{k_1})^{k_2} = A^{k_1 \times k_2}$
+\end{quolity}
+
+\begin{quolity}
+    $(A \pm B)^2 = A^2 \pm 2AB + B^2$
+\end{quolity}
+
+\begin{quolity}
+    $(AB)^k \neq A^kB^k$，当且仅当$AB$可交换时，``=''成立. 
+    \newline
+    证明: $(AB)^k = \overbrace{AB \times AB \times AB \dots \times AB}^{\mbox{共k个AB}} \neq \overbrace{AAA \cdots A}^{\mbox{共k个A}} \overbrace{BBB \cdots B}^{\mbox{共k个B}}$
+\end{quolity}
+
+\begin{quolity}
+    $(A \pm E)^2 = A^2 \pm 2AE + E^2$
+\end{quolity}
+
+\subsection{矩阵可交换}
+
+\begin{definition}
+    如果两个矩阵相乘满足$AB = BA$，则称矩阵$A$、$B$可交换. 
+\end{definition}
+
+\begin{example}
+    求与$A=\left ( \begin{matrix}
+        1 & 0 \\
+        1 & 1
+    \end{matrix} \right )$可交换的矩阵. 
+    \newline
+    解: 设矩阵$B=\left ( \begin{matrix}
+        a & b \\
+        c & d
+    \end{matrix} \right )$，根据矩阵可交换的定义，解$AB = BA$，即$$\left ( \begin{matrix}
+        1 & 0 \\
+        1 & 1
+    \end{matrix} \right ) \left ( \begin{matrix}
+        a & b \\
+        c & d
+    \end{matrix} \right ) = \left ( \begin{matrix}
+        a & b \\
+        c & d
+    \end{matrix} \right ) \left ( \begin{matrix}
+        1 & 0 \\
+        1 & 1
+    \end{matrix} \right )$$
+    根据矩阵乘法的定义，得到如下式子. 
+    $$\left ( \begin{matrix}
+        a & b \\
+        a+c & b+d
+    \end{matrix} \right ) = \left ( \begin{matrix}
+        a+b & b \\
+        c+d & d
+    \end{matrix} \right )$$
+    元素对应相等的到以下等式. 
+    $$\begin{cases}
+        a = a + b \\
+        b = b \\
+        a + c = c + d \\
+        b + d = d
+    \end{cases}$$
+    最终解得$B=\left ( \begin{matrix}
+        a & 0 \\
+        c & a
+    \end{matrix} \right )$，其中$a$、$c$都是自由变量. 
+\end{example}
+
+\subsection{矩阵的转置}
+
+矩阵的转置定义如同行列式的转置，都是将行列交换，使$a_{ij} = a_{ji}$. 若某矩阵形状为$m \times n$，则转置后矩阵形状为$n \times m$. 
+
+\begin{definition}
+    $$\left ( \begin{matrix}
+        a_{11} & a_{12} & \cdots & a_{1n} \\
+        a_{21} & a_{22} & \cdots & a_{2n} \\
+        \cdots & \cdots & \cdots & \cdots \\
+        a_{n1} & a_{n2} & \cdots & a_{nn}
+    \end{matrix} \right )^T = \left ( \begin{matrix}
+        a_{11} & a_{21} & \cdots & a_{n1} \\
+        a_{12} & a_{22} & \cdots & a_{n2} \\
+        \cdots & \cdots & \cdots & \cdots \\
+        a_{1n} & a_{2n} & \cdots & a_{nn}
+    \end{matrix} \right )$$
+\end{definition}
+
+\subsection{矩阵转置的性质}
+
+\begin{quolity}
+    $(A^T)^T = A$
+\end{quolity}
+
+\begin{quolity}
+    $(A + B)^T = A^T + B^T$
+\end{quolity}
+
+\begin{quolity}
+    $(AB)^T = B^TA^T$，$(A_1A_2A_3 \dots A_n)^T = (A_n^TA_{n-1}^TA_{n-2}^T \dots A_1^T)$
+\end{quolity}
+
+\begin{quolity}
+    $(kA)^T = kA^T$
+\end{quolity}
+
+\subsection{特殊的矩阵}
+
+\subsubsection{数量矩阵}
+
+\begin{definition}
+    主对角线元素相等，其余全为0的矩阵称为\textbf{数量矩阵}
+    $$\left ( \begin{matrix}
+        a &   &   & \\
+          & a &   & \\
+          &   & \ddots & \\
+          &   &   & a
+    \end{matrix} \right )$$
+\end{definition}
+
+\begin{quolity}
+    $A = aE$，其对角线元素为单位矩阵的$a$倍. 
+\end{quolity}
+
+\subsubsection{对角形矩阵}
+
+\begin{definition}
+    只有主对角线上有非零元素的矩阵称为对角形矩阵. 
+    $$\left ( \begin{matrix}
+        a_1 &   &   & \\
+          & a_2 &   & \\
+          &   & \ddots & \\
+          &   &   & a_n
+    \end{matrix} \right ) = diag(a_1 a_2 \dots a_n)$$
+\end{definition}
+
+\begin{quolity}
+    矩阵A，\textbf{左乘}对角形矩阵B，相当于对A的每一\textbf{行}乘上相应的值. 
+    $$\left ( \begin{matrix}
+        k_1 &   &   & \\
+          & k_2 &   & \\
+          &   & \ddots & \\
+          &   &   & k_n
+    \end{matrix} \right ) \left ( \begin{matrix}
+        a_{11} & a_{12} & \cdots & a_{1n} \\
+        a_{21} & a_{22} & \cdots & a_{2n} \\
+        \cdots & \cdots & \ddots & \cdots \\
+        a_{n1} & a_{n2} & \cdots & a_{nn}
+    \end{matrix} \right ) = \left ( \begin{matrix}
+        k_1a_{11} & k_1a_{12} & \cdots & k_1a_{1n} \\
+        k_2a_{21} & k_2a_{22} & \cdots & k_2a_{2n} \\
+        \cdots & \cdots & \ddots & \cdots \\
+        k_na_{n1} & k_na_{n2} & \cdots & k_na_{nn}
+    \end{matrix} \right )$$
+\end{quolity}
+
+\begin{quolity}
+    矩阵A，\textbf{右乘}对角形矩阵B，相当于对A的每一\textbf{列}乘上相应的值. 
+    $$\left ( \begin{matrix}
+        a_{11} & a_{12} & \cdots & a_{1n} \\
+        a_{21} & a_{22} & \cdots & a_{2n} \\
+        \cdots & \cdots & \ddots & \cdots \\
+        a_{n1} & a_{n2} & \cdots & a_{nn}
+    \end{matrix} \right ) \left ( \begin{matrix}
+        k_1 &   &   & \\
+          & k_2 &   & \\
+          &   & \ddots & \\
+          &   &   & k_n
+    \end{matrix} \right ) = \left ( \begin{matrix}
+        k_1a_{11} & k_2a_{12} & \cdots & k_na_{1n} \\
+        k_1a_{21} & k_2a_{22} & \cdots & k_na_{2n} \\
+        \cdots & \cdots & \ddots & \cdots \\
+        k_1a_{n1} & k_2a_{n2} & \cdots & k_na_{nn}
+    \end{matrix} \right )$$
+\end{quolity}
+
+\subsection{伴随矩阵}
+
+\begin{definition}
+    将\textbf{方阵}中每个元素替换成该元素的代数余子式并求转置即为伴随矩阵. 即求所有元素的代数余子式，将第每行代数余子式按列放，构成矩阵. 
+\end{definition}
+
+\begin{example}
+    $A=\left ( \begin{matrix}
+        1 & 1 & 1 \\
+        2 & 1 & 3 \\
+        1 & 1 & 4
+    \end{matrix} \right )$，可以计算出$A_{11} = 1, A_{21} =-3, A_{31} = 2, A_{12} = -5, A_{22} = 3, A_{32} = -1, A_{13} = 1, A_{23} = 0, A_{33} = -1$，将所求代数余子式按列排放形成方阵得到$A^*= \left ( \begin{matrix}
+        A_{11} & A_{21} & A_{31} \\
+        A_{12} & A_{22} & A_{32} \\
+        A_{13} & A_{23} & A_{33}
+    \end{matrix} \right ) = \left ( \begin{matrix}
+        1 & -3 & 2 \\
+        -5 & 3 & -1 \\
+        1 & 0 & 1
+    \end{matrix} \right )$
+\end{example}
+
+\subsubsection{伴随矩阵的性质}
+
+\begin{quolity}
+    $AA^* = A^*A = \left | A \right |E$
+\end{quolity}
+
+某行(列)的代数余子式乘上构成代数余子式的元素为该行列式的值. 
+根据异乘变零定理，代数余子式乘以不构成自身的行或列的值为零，所以非对角线元素为0. 
+
+\begin{quolity}
+    $\left | AA^* \right | = \left | A^*A \right | = \left | A^* \right | \left | A \right | = \left | A \right | \left | A^* \right | = \left | A \right |^n$，则$\left | A^* \right | = \left | A \right |^{n-1}$
+\end{quolity}
+
+两矩阵乘积的行列式等于两矩阵行列式的乘积. 
+
+\subsection{逆矩阵}
+
+\begin{definition}
+    $A$是$n$阶矩阵，$B$是$A$的同阶矩阵，如果满足$AB=BA=E$，则称$A$是$B$的逆，或$B$是$A$的逆，记作$A^{-1} = B$或$B^{-1} = A$. 
+\end{definition}
+
+是否所有的矩阵均可逆呢？答案是否定的，零矩阵不可逆. 
+
+
+方阵可逆的判断条件最基础的就是$\left | A \right | \neq 0$，如果方阵可逆，则称该方阵是\textbf{非奇异}、\textbf{非退化}、\textbf{满秩}、\textbf{可逆}. 
+
+\begin{theorem}
+    $A$是$n$阶方阵，若满足$\left | A \right | \neq 0$，则$A$可逆，且满足$A^{-1} = \frac{1}{\left | A \right |}A^*$. 
+\end{theorem}
+
+由以上定理产生了逆矩阵的求法: \textbf{伴随矩阵法}，但在考试当中并不是很常用，原因为计算量较大，所以常用另外一种\textbf{初等变换法}求逆矩阵. 
+
+\subsection{逆矩阵的性质}
+
+\begin{quolity}
+    若$A$可逆，则$A^{-1}$可逆，且满足$(A^{-1})^{-1} = A$. 
+\end{quolity}
+
+\begin{quolity}
+    若$A$、$B$可逆，则$AB$可逆，且满足$(AB)^{-1} = B^{-1}A^{-1}$. 
+\end{quolity}
+
+一系列可逆矩阵的乘积的逆等于各个矩阵倒转后的逆相乘. 
+
+\begin{quolity}
+    若$A$可逆，则$A^T$可逆，且满足$(A^{-1})^T = (A^T)^{-1}$，特别地，$(kA)^-1 = \frac{1}{k}A^{-1}$. 
+\end{quolity}
+
+以上性质区别于行列式中$(kA)^T = kA^T$，因为此处$k$可以看作是只包含单个元素的行列式，$k^T = k$，
+而$(kA)^{-1}$需将$k$看作是只包含一个元素的矩阵，需要满足$kk^-1 = E$，即$k^{-1} = \frac{1}{k}$. 
+
+\begin{quolity}
+    若$A$可逆，则$\left | A^{-1} \right | = \left | A \right |^{-1}$. 
+\end{quolity}
+
+\begin{quolity}
+    若$A$可逆，则$A^*$也可逆，且满足$(A^*)^-1 = \frac{1}{\left | A \right |}A$. 
+\end{quolity}
+
+证明$\left | A^{-1} \right | = \left | A \right |^{-1}$，可从初始结论$AA^-1 = E$出发，两边同时取行列式得$\left | A \right | \left | A^* \right | = \left | E \right | = 1$，则有$\left | A^{-1} \right | = \frac{1}{\left | A \right |} = \left | A \right |^{-1}$. 
+证明$(A^*)^-1 = \frac{1}{\left | A \right |}A$，从$A$与$A^*$的关系出发，$AA^* = A^*A = \left | A \right |E$，两端同时除以$\left | A \right |$得到$(\frac{1}{\left | A \right |}A)A^* = E$，再同时右乘以$(A^*)$得到最终结果. 
+
+\subsection{分块矩阵的运算}
+
+运用分块矩阵，我们可以将$\left ( \begin{array}{cccc|c}
+    1 & 1 & 3 & 4 & 0 \\ \hline
+    2 & 0 & 1 & 1 & 0 \\
+    1 & 1 & 1 & 1 & 3 \\
+    4 & 1 & 1 & 1 & 0
+\end{array} \right )$分为$\begin{pmatrix}
+    A_1 & A_2 \\
+    A_3 & A_4
+\end{pmatrix}$
+
+\begin{definition}
+    加法: $\begin{pmatrix}
+        A_1 & A_2 \\
+        A_3 & A_4
+    \end{pmatrix} + \begin{pmatrix}
+        B_1 & B_2 \\
+        B_3 & B_4
+    \end{pmatrix} = \begin{pmatrix}
+        A_1+B_1 & A_2+B_2 \\
+        A_3+B_3 & A_4+B_4
+    \end{pmatrix}$
+\end{definition}
+
+\begin{definition}
+    数乘: $k \begin{pmatrix}
+        A_1 & A_2 \\
+        A_3 & A_4
+    \end{pmatrix} = \begin{pmatrix}
+        kA_1 & kA_2 \\
+        kA_3 & kA_4
+    \end{pmatrix}$
+\end{definition}
+
+\begin{definition}
+    乘法: $\begin{pmatrix}
+        A_1 & A_2 \\
+        A_3 & A_4
+    \end{pmatrix} \begin{pmatrix}
+        B_1 & B_2 \\
+        B_3 & B_4
+    \end{pmatrix} = \begin{pmatrix}
+        A_1B_1 + A_2B_3 & A_1B_2 + A_2B_4 \\
+        A_3B_1 + A_4B_3 & A_3B_2 + A_4B_4
+    \end{pmatrix}$
+\end{definition}
+
+\begin{definition}
+    对角形分块矩阵相乘: $\begin{pmatrix}
+        A_1 &     &     & \\
+            & A_2 &     & \\
+            &     & \ddots & \\
+            &     &     & A_n
+    \end{pmatrix} \begin{pmatrix}
+        B_1 &     &     & \\
+            & B_2 &     & \\
+            &     & \ddots & \\
+            &     &     & B_n
+    \end{pmatrix} = \begin{pmatrix}
+        A_1B_1 &     &     & \\
+            & A_2B_2 &     & \\
+            &     & \ddots & \\
+            &     &        & A_nB_n
+    \end{pmatrix}$
+\end{definition}
+
+\begin{definition}
+    转置: $\begin{pmatrix}
+        A_1 & A_2 & A_3 \\
+        A_4 & A_5 & A_6
+    \end{pmatrix}^T = \begin{pmatrix}
+        A_1^T & A_4^T \\
+        A_2^T & A_5^T \\
+        A_3^T & A_6^T
+    \end{pmatrix}$
+\end{definition}
+
+求分块矩阵的转置操作为将分块矩阵先按正常矩阵转置好，再对每个分块单独转置. 
+
+\subsection{标准形矩阵}
+
+\begin{definition}
+    从左上角开始一串``1''不间断，其余位置为``0''的$m \times n$矩阵为标准形矩阵. 
+    $$A=\begin{pmatrix}
+        1 &   &    &   &  & \\
+          & \ddots &   &  &  & \\
+          &   & 1  &   &  & \\
+          &   &    & 0 &  & \\
+          &   &    &   & \ddots & \\
+          &   &    &   &  & 0
+    \end{pmatrix}_{m \times n}$$
+\end{definition}
+
+标准形矩阵并不一定$a_{ii}$均为1，只要$a_{ii}$的1不间断即为标准形矩阵. 
+
+\subsection{初等矩阵变换 - 行与列}
+
+$$\begin{cases}
+    \mbox{交换某两行: } \begin{pmatrix}
+        A_{11} & A_{12} & A_{13} \\
+        A_{21} & A_{22} & A_{23} \\
+        A_{31} & A_{32} & A_{33}
+    \end{pmatrix} \xrightarrow{\mbox{交换1、3行}} \begin{pmatrix}
+        A_{31} & A_{32} & A_{33} \\
+        A_{21} & A_{22} & A_{23} \\
+        A_{11} & A_{12} & A_{13}
+    \end{pmatrix} \\
+
+    ~\\
+
+    \mbox{用$k$乘某行: } \begin{pmatrix}
+        A_{11} & A_{12} & A_{13} \\
+        A_{21} & A_{22} & A_{23} \\
+        A_{31} & A_{32} & A_{33}
+    \end{pmatrix} \xrightarrow{\mbox{用k乘第1行}} \begin{pmatrix}
+        kA_{11} & kA_{12} & kA_{13} \\
+        A_{21} & A_{22} & A_{23} \\
+        A_{31} & A_{32} & A_{33}
+    \end{pmatrix} \\
+
+    ~\\
+
+    \mbox{某行的$k$倍加到另一行: } \\ ~\\ \begin{pmatrix}
+        A_{11} & A_{12} & A_{13} \\
+        A_{21} & A_{22} & A_{23} \\
+        A_{31} & A_{32} & A_{33}
+    \end{pmatrix} \xrightarrow[\mbox{加到第2行}]{\mbox{第1行的k倍}} \begin{pmatrix}
+        A_{11} & kA_{12} & kA_{13} \\
+        A_{21} + kA_{11} & A_{22}+kA_{12} & A_{23}+kA_{13} \\
+        A_{31} & A_{32} & A_{33}
+    \end{pmatrix}
+\end{cases}$$
+
+初等变换对行成立同时对列也成立，前者称为\textbf{行变换}，后者为\textbf{列变换}，在做题时均使用``$\rightarrow$''标出变换操作. 
+
+\begin{theorem}
+    任给矩阵都能通过矩阵的初等变换化为标准形. 
+\end{theorem}
+
+\begin{example}
+    $\begin{pmatrix}
+        1 & 2 & 1 \\
+        -1 & -1 & 0 \\
+        1 & 3 & 2
+    \end{pmatrix} \xrightarrow[E(1,3(-1))]{E(1, 2(1))} \begin{pmatrix}
+        1 & 2 & 1 \\
+        0 & 1 & 1 \\
+        0 & 1 & 1
+    \end{pmatrix} \xrightarrow{E(2,3(-1))} \begin{pmatrix}
+        1 & 2 & 1 \\
+        0 & 1 & 1 \\
+        0 & 0 & 0
+    \end{pmatrix} \xrightarrow[\mbox{列}E(1,3(-1))]{\mbox{列}E(1,2(-2))} \begin{pmatrix}
+        1 & 0 & 0 \\
+        0 & 1 & 0 \\
+        0 & 0 & 0
+    \end{pmatrix}$
+\end{example}
+
+\subsubsection{等价矩阵}
+
+通过以上初等变换$A \rightarrow B$，则有$A,B$等价，记作$A \cong B$. 
+
+\subsubsection{等价矩阵的性质}
+
+\begin{quolity}
+    反身性: $A \cong B$. 
+\end{quolity}
+
+\begin{quolity}
+    对称性: $A \cong B \Leftrightarrow B \cong A$. 
+\end{quolity}
+
+\begin{quolity}
+    传递性: $A \cong B, B \cong C \Rightarrow A \cong C$. 
+\end{quolity}
+
+\begin{quolity}
+    $A \cong \mbox{标准形}$
+\end{quolity}
+
+\subsubsection{初等方阵}
+
+\begin{definition}
+    对单位矩阵做\textbf{一次}初等变换得到的矩阵称为初等方阵. 
+\end{definition}
+
+初等方阵用$E(i,j), E(i(k)), E(i,j(k))$表示，$E(i,j)$为交换单位矩阵$i,j$行，$E(i(k))$表示对单位矩阵第$i$行乘上$k$，$E(i,j(k))$表示第$i$行的$k$倍加到第$j$行. 
+
+\begin{example}
+    $$\begin{pmatrix}
+        1 & 0 & 0 & 0 \\
+        0 & 1 & 0 & 0 \\
+        0 & 0 & 1 & 0 \\
+        0 & 0 & 0 & 1
+    \end{pmatrix} \xrightarrow{E(1,3)} \begin{pmatrix}
+        0 & 0 & 1 & 0 \\
+        0 & 1 & 0 & 0 \\
+        1 & 0 & 0 & 0 \\
+        0 & 0 & 0 & 1
+    \end{pmatrix}$$
+
+    $$\begin{pmatrix}
+        1 & 0 & 0 & 0 \\
+        0 & 1 & 0 & 0 \\
+        0 & 0 & 1 & 0 \\
+        0 & 0 & 0 & 1
+    \end{pmatrix} \xrightarrow{E(3(5))} \begin{pmatrix}
+        1 & 0 & 0 & 0 \\
+        0 & 1 & 0 & 0 \\
+        0 & 0 & 5 & 0 \\
+        0 & 0 & 0 & 1
+    \end{pmatrix}$$
+
+    $$\begin{pmatrix}
+        1 & 0 & 0 & 0 \\
+        0 & 1 & 0 & 0 \\
+        0 & 0 & 1 & 0 \\
+        0 & 0 & 0 & 1
+    \end{pmatrix} \xrightarrow{E(3,1(5))} \begin{pmatrix}
+        1 & 0 & 5 & 0 \\
+        0 & 1 & 0 & 0 \\
+        0 & 0 & 1 & 0 \\
+        0 & 0 & 0 & 1
+    \end{pmatrix}$$
+\end{example}
+
+\subsubsection{初等矩阵左乘与右乘}
+
+目前为止我们已经学习了如何使用$E(i,j)$等方式描述初等方阵，而初等方阵在使用上有左乘与右乘两种方式，左乘矩阵$A$表示对$A$的行作与$E$一样的操作，右乘表示对$A$的列作与$E$一样的操作. 
+我们通过以下几个例子来感受左乘与右乘的区别. 
+
+\begin{example}
+    ~\\
+
+    将$A$的第1行与第3行交换: $E(1,3)A$. 
+    \newline
+    将$A$的第2列与第4列交换: $AE(2,4)$. 
+    \newline
+    将$A$的第3列乘上2: $AE(3(2))$. 
+    \newline
+    将$A$第2列的5倍加到第3列: $AE(2,3(5))$. 
+\end{example}
+
+初等方阵均可逆，且满足如下条件. 
+$$E(i,j)^{-1} = E(i,j), E(i(k))^{-1} = E(i(\frac{1}{k})), E(i,j(k))^{-1} = E(i,j(-k))$$
+
+\begin{theorem}
+    任给方阵$A$，均存在$P_1, P_2, \dots, P_s, Q_1, Q_2, \dots, Q_t$使得$P_s \dots P_2P_1AQ_1Q_2 \dots Q_t = B$. 
+\end{theorem}
+
+\begin{corollary}
+    $A \cong B \Leftrightarrow \mbox{存在可逆P,Q使得PAQ=B}$.
+\end{corollary}
+
+\begin{theorem}
+    $A\mbox{可逆} \Leftrightarrow \mbox{$A$的标准形为$E$}$.
+\end{theorem}
+
+\begin{theorem}
+    $A\mbox{可逆} \Leftrightarrow A= P_1P_2 \dots P_s$. 
+\end{theorem}
+
+\subsubsection{利用初等变换求矩阵的逆}
+
+$A \mbox{可逆} \Leftrightarrow A^{-1} \mbox{可逆}$，考虑以下式子. 
+$$A^{-1} = Q_1Q_2 \cdots Q_t (\mbox{$Q_t$为一系列初等方阵}) \xrightarrow{\mbox{两边右乘$A$}} E=Q_1Q_2 \cdots Q_tA$$
+对上式该如何理解呢？我们对$A$作一系列初等变换，同时对$E$作与$A$一样的变换，当$A \rightarrow E$时，$E \rightarrow A$. 
+
+\begin{example}
+    求$A=\begin{pmatrix}
+        1 & 0 & 1 \\
+        2 & 1 & 0 \\
+        -3 & 2 & -5
+    \end{pmatrix}$
+    \newline
+    解: $$\begin{aligned}
+        (A, E)=&\begin{pmatrix}
+            1 & 0 & 1 \\
+            2 & 1 & 0 \\
+            -3 & 2 & -5
+        \end{pmatrix} \begin{pmatrix}
+            1 & 0 & 0 \\
+            0 & 1 & 0 \\
+            0 & 0 & 1
+        \end{pmatrix} \\
+        =&\begin{pmatrix}
+            1 & 0 & 1 \\
+            0 & 1 & -2 \\
+            0 & 2 & -2
+        \end{pmatrix} \begin{pmatrix}
+            1 & 0 & 0 \\
+            -2 & 1 & 0 \\
+            3 & 0 & 1
+        \end{pmatrix} = \begin{pmatrix}
+            1 & 0 & 1 \\
+            0 & 1 & -2 \\
+            0 & 0 & 2
+        \end{pmatrix} \begin{pmatrix}
+            1 & 0 & 0 \\
+            -2 & 1 & 0 \\
+            7 & -2 & 1
+        \end{pmatrix} \\
+        =&\begin{pmatrix}
+            1 & 0 & 0 \\
+            0 & 1 & 0 \\
+            0 & 0 & 2
+        \end{pmatrix} \begin{pmatrix}
+            -\frac{5}{2} & 1 & -\frac{1}{2} \\
+            5 & -1 & 1 \\
+            7 & -2 & 1
+        \end{pmatrix} = \begin{pmatrix}
+            1 & 0 & 0 \\
+            0 & 1 & 0 \\
+            0 & 0 & 1
+        \end{pmatrix} \begin{pmatrix}
+            -\frac{5}{2} & 1 & -\frac{1}{2} \\
+            5 & -1 & 1 \\
+            \frac{7}{2} & -1 & \frac{1}{2}
+        \end{pmatrix} \\
+        =&(E, A^{-1})
+    \end{aligned}$$
+\end{example}
+
+解题步骤将$A,E$写到一起，使用一系列初等变换将$A$化为$E$，同时对$E$作一系列相同的变换，最终结果即为$(E, A^{-1})$. 
+
+\section{秩}
+
+\subsection{$k$阶子式}
+
+\begin{definition}
+    对于$m \times n$的矩阵$A$，任取$k$行$k$列$(k \le min(m,n))$，不改变它们在矩阵中的相对位置构成的子行列式称为$k$阶子式. 
+\end{definition}
+
+\begin{example}
+    $\begin{pmatrix}
+        1 & 2 & 3 \\
+        4 & 5 & 6 \\
+        7 & 8 & 9
+    \end{pmatrix}$的2阶子式有$\begin{pmatrix}
+        1 & 2 \\
+        4 & 5
+    \end{pmatrix} \begin{pmatrix}
+        2 & 3 \\
+        5 & 6
+    \end{pmatrix} \begin{pmatrix}
+        4 & 5 \\
+        7 & 8
+    \end{pmatrix} \begin{pmatrix}
+        5 & 6 \\
+        8 & 9
+    \end{pmatrix}$
+\end{example}
+
+\subsubsection{矩阵的秩}
+
+\begin{definition}
+    非零子式的最高阶数即为矩阵的秩，记为r(A)或rank(A)或秩(A). 
+\end{definition}
+
+\begin{example}
+    $\begin{pmatrix}
+        1 & 1 & 1 & 1 \\
+        2 & 3 & 4 & 5 \\
+        2 & 2 & 2 & 2
+    \end{pmatrix}$，注意到第1行与第3行成比例，则取3阶行列式时行必然取到1、3行，所以3阶行列式的值全为0，该矩阵最高能取到的非零子式阶数为2阶，即矩阵的秩为2. 
+\end{example}
+
+特别地，零矩阵的秩为0，即$r(0) = 0$. 
+
+
+对于$m \times n$的矩阵而言，满足$0 \le r(A) \le min(m,n)$，若$r(A) = m$则称为行满秩，$r(A) = n$则称为列满秩，$r(A) = m = n$称为满秩. 
+
+\begin{theorem}
+    若$A_{m \times n}$，且为方阵，即$m = n$，$A \mbox{可逆} \Leftrightarrow A \mbox{满秩}$. 
+\end{theorem}
+
+\subsubsection{求矩阵的秩}
+
+\begin{theorem}
+    $r(A) = r \Leftrightarrow \mbox{有一个$r$阶子式不为0，所有的$r+1$子式全为0}$. 
+\end{theorem}
+
+如果计算全部$k$阶子式的值从而求得矩阵的秩，是不是特别麻烦呢，做题时，我们通常不采用这种求法，而是先求出阶梯形矩阵进而计算矩阵的值. 
+那么什么是阶梯型矩阵. 
+
+\begin{definition}
+    自上而下，首个非零元素左边0的个数随函数的增加而增加，若有0行则在非零行的下面. 
+\end{definition}
+
+\begin{example}
+    $\begin{pmatrix}
+        1 & 1 & 1 & 1 & 0 & 1 \\
+        0 & 1 & 0 & 4 & 1 & 1 \\
+        0 & 0 & 0 & 5 & 3 & 3
+    \end{pmatrix}$，矩阵中各行非零元素分别为1、1、5. 
+\end{example}
+
+我们可以通过对矩阵$A$作一系列初等变换得到阶梯型矩阵，而初等变换\textbf{不改变}矩阵的秩. 
+
+\begin{theorem}
+    $\mbox{矩阵的秩} = \mbox{非零行的行数}$. 
+\end{theorem}
+
+\begin{example}
+    $A=\begin{pmatrix}
+        0 & 1 & 1 & 1 & 1 \\
+        0 & 0 & 0 & 4 & 5 \\
+        0 & 0 & 0 & 0 & 1 \\
+        0 & 0 & 0 & 0 & 0
+    \end{pmatrix}$，各行首非零元素为1、4、1，非零行共3行，所以$r(A)=3$. 
+\end{example}
+
+\subsubsection{矩阵的秩的性质}
+
+\begin{quolity}
+    $r(A) = r(A^{-1})$. 
+\end{quolity}
+
+\begin{quolity}
+    矩阵乘以可逆矩阵后秩不变. 
+\end{quolity}
+
+\begin{quolity}
+    $A_{m \times n}$，$P_{m \times m}$可逆矩阵，$Q_{n \times n}$可逆矩阵，则$r(A) = r(PA) = r(AQ) = r(PAQ)$. 
+\end{quolity}
+
+\chapter{向量}
+
+\begin{definition}
+    由$m$个$a_1,a_2,\dots,a_n$构成的有序数组称为向量，其中$m$为向量个数，$n$为向量维数. 
+\end{definition}
+
+从形式上将向量分为行向量与列向量，但两者本质上并无区别，只要格式统一就好了，不用在乎使用行向量好还是列向量好. 
+$$\mbox{行向量: }(a_1 a_2 \cdots a_n), \mbox{列向量} \begin{pmatrix}
+    a_1 \\ a_2 \\ \vdots \\a_n
+\end{pmatrix}$$
+其中将分量全为0的向量称作零向量. 
+
+
+向量与常数的乘积满足$k\alpha = 0 \Leftrightarrow k = 0 \mbox{或} \alpha = 0$，而矩阵$AB=0 \nLeftrightarrow A=0 \mbox{或} B=0$. 
+
+\section{向量的运算}
+
+\subsection{内积}
+
+\begin{definition}
+    假设$\alpha = (a_1, a_2, \dots, a_n), \beta = (\beta_1, \beta_2, \dots, \beta_n)$，则$\alpha \beta = \alpha_1\beta_1 + \alpha_2\beta_2 + \cdots + \alpha_n\beta_n$称为向量的内积. 
+\end{definition}
+
+假设$\alpha = \begin{pmatrix}
+    a_1 \\ a_2 \\ a_3
+\end{pmatrix}$，$\beta = \begin{pmatrix}
+    b_1 \\ b_2 \\ b_3
+\end{pmatrix}$. 
+
+\begin{quolity}
+    $(\vec a \cdot \vec a) \ge 0$.
+\end{quolity}
+
+\begin{quolity}
+    对称性: $\vec a \cdot \vec b = \vec b \cdot \vec a$. 
+\end{quolity}
+
+\begin{quolity}
+    $(k\alpha\beta) = k(\alpha\beta)$. 
+\end{quolity}
+
+\begin{quolity}
+    $(\alpha + \beta) \cdot \gamma = \alpha\gamma + \beta\gamma$. 
+\end{quolity}
+
+\subsection{范数(长度、模)}
+
+\begin{definition}
+    范数与向量长度同义，范数用$||\vec a||$表示，且$||\vec a|| = \sqrt{\vec a \vec a}$. 
+\end{definition}
+
+若$||\vec a||=1$，则称$\vec a$为单位向量，若不为1，也可对向量进行标准化，$\frac{1}{||\vec a|| \vec a}$. 
+
+\begin{quolity}
+    $||\vec a|| \ge 0$. 
+\end{quolity}
+
+\begin{quolity}
+    $||k\vec a|| = |k|||\vec a||$. 
+\end{quolity}
+
+\begin{quolity}
+    $|\vec a \cdot \vec b| \le ||\vec a|| ||\vec b||$. 
+\end{quolity}
+
+\begin{quolity}
+    $||\vec a + \vec b|| \le ||\vec a|| + ||\vec b||$. 
+\end{quolity}
+
+\section{向量间的线性关系}
+
+$\beta, \alpha_1, \alpha_2, \dots, \alpha_n$都是$n$维向量，若存在$$\beta = k_1\alpha_1 + k_2\alpha_2 + \cdots + k_n\alpha_n$$
+则$\beta$是$\alpha$的线性组合，其中$k$称为组合系数，若$k$全取0，则$\beta$为零向量. 
+
+\begin{quolity}
+    零向量可由任意向量线性组合而成. 
+\end{quolity}
+
+\begin{quolity}
+    从向量组中取出任意向量都可由向量组表示. 
+\end{quolity}
+
+\begin{quolity}
+    任意向量都可由$\varepsilon_1 = (1,0,\dots,0), \varepsilon_2 = (0, 1, \dots, 0), \dots, \varepsilon_n = (0, 0, \dots, 1)$表示. 
+\end{quolity}
+
+\begin{example}
+    $\beta = (-3, 2, -4), \alpha_1 = (1, 0, 1), \alpha_2 = (2, 1, 0), \alpha_3 = (-1, 1, -2)$，用$\alpha$表示$\beta$.
+    \newline
+    解: 设$\beta = k_1\alpha_1 + k_3\alpha_3 + k_3\alpha_3$，则$(-3, 2, -4) = (k_1 + 2k_2 + k_3, k_2 + k_3, k_1 - 2k_3)$，解得$k_1=2, k_2=-1, k_3=3$，则$\beta = 2\alpha_1 - \alpha_2 + 3\alpha_3$. 
+\end{example}
+
+\section{向量组的等价}
+
+\begin{definition}
+    假设$\alpha_1, \alpha_2, \dots, \alpha_n$与$\beta_1, \beta_2, \dots, \beta_n$同维且可相互线性表示，则$\alpha$与$\beta$等价，记作$\{\alpha_1 \alpha_2 \dots \alpha_n\} \cong \{\beta_1 \beta_2 \dots \beta_n\}$.
+\end{definition}
+
+\section{等价向量组的性质}
+
+\begin{quolity}
+    反身性: $\{\alpha_1 \alpha_2 \dots \alpha_n\} \cong \{\alpha_1 \alpha_2 \dots \alpha_n\}$.
+\end{quolity}
+
+\begin{quolity}
+    对称性: $\{\alpha_1 \alpha_2 \dots \alpha_n\} \cong \{\beta_1 \beta_2 \dots \beta_n\} \Leftrightarrow \{\beta_1 \beta_2 \dots \beta_n\} \cong \{\alpha_1 \alpha_2 \dots \alpha_n\}$
+\end{quolity}
+
+\begin{quolity}
+    传递性: $\{\alpha_1 \alpha_2 \dots \alpha_n\} \cong \{\beta_1 \beta_2 \dots \beta_n\} \mbox{并且} \{\beta_1 \beta_2 \dots \beta_n\} \cong \{\gamma_1 \gamma_2 \dots \gamma_n\} \Rightarrow \{\alpha_1 \alpha_2 \dots \alpha_n\} \cong \{\gamma_1 \gamma_2 \dots \gamma_n\}$
+\end{quolity}
+
+\section{线性相关与线性无关}
+
+\begin{definition}
+    $\alpha_1 \dots \alpha_n$是$n$个$m$维向量，若存在一组\textbf{不全为}0的$k_1 \dots k_n$使得$k_1\alpha_1 + k_2\alpha_2 + \cdots + k_n\alpha_n = 0$成立，则$\alpha_1 \alpha_2 \dots \alpha_n$是线性相关的. 
+\end{definition}
+
+反之，线性无关的条件有\textbf{找不到}一组不全为0的$k_1 \dots k_n$使得$k_1\alpha_1 + k_2\alpha_2 + \cdots + k_n\alpha_n = 0$成立. 
+
+
+如果向量组中两向量成比例关系，则该向量组必然线性相关，因为可以使其他向量的$k$为0，成相关的两向量$k$不为0. 
+
+
+如果向量组中包含零向量，则该向量组也必然线性相关，零向量的系数可以不为0，其余均为0即可. \textbf{特别地}，如果向量组中只有一个向量，包括只有零向量这种情况，这时候向量组是\textbf{线性无关}的. 
+
+\begin{quolity}
+    如果$\alpha_1 \alpha_2 \dots \alpha_s$是线性相关的，则$\alpha_1 \alpha_2 \dots \alpha_s \alpha_{s+1} \dots \alpha_t$也是线性相关的，后者称为\textbf{接长向量组}. 
+\end{quolity}
+一句话概括上述性质：``向量组中部分向量是线性相关的，则整体也是线性相关的''. 反之其逆否命题也成立：``整体是线性无关的，则部分也是线性无关的''. 
+口诀：``无关组，接长也无关；相关组，截短也相关''.
+
+\begin{theorem}
+    $\alpha_1 \alpha_2 \dots \alpha_s \mbox{线性相关} \Leftrightarrow \mbox{至少一个向量可用其余向量表示}$. 如果$\alpha_1 \alpha_2 \dots \alpha_s$线性无关而$\beta \alpha_1 \alpha_2 \dots \alpha_s$线性相关，则$\beta$可由$\alpha_1 \alpha_2 \dots \alpha_s$唯一表示. 
+\end{theorem}
+
+\begin{theorem}
+    替换定理: 若$\alpha_1 \alpha_2 \dots \alpha_s$线性无关，但均可由$\beta_1 \beta_2 \dots \beta_t$线性表示，则$s \le t$，若$s > t$，则$\alpha_1 \alpha_2 \dots \alpha_s$是线性相关的. 
+\end{theorem}
+
+\begin{theorem}
+    若有$m$个$n$维的向量构成向量组，若满足$m > n$，则该向量组必然线性相关. 
+\end{theorem}
+
+\begin{corollary}
+    等价的线性无关组，包含向量的个数相同. 
+\end{corollary}
+
+\section{向量组的秩}
+
+\subsubsection{极大线性无关组}
+
+考虑以下向量，如果其余向量均能使用部分向量线性表示，则至少需要保留几个向量呢. 
+$$\begin{pmatrix}
+    1 \\ 0
+\end{pmatrix} \begin{pmatrix}
+    2 \\ 0
+\end{pmatrix} \begin{pmatrix}
+    0 \\ 5
+\end{pmatrix} \begin{pmatrix}
+    0 \\10
+\end{pmatrix}$$
+答案是只需要保留2个，比如$\begin{pmatrix}
+    2 \\ 0
+\end{pmatrix}$和$\begin{pmatrix}
+    0 \\ 10
+\end{pmatrix}$均可由其余向量的2倍表示. 
+
+
+除去可由其余向量表示的向量剩下的，我们称之为极大线性无关组，即剩下的这些向量是线性无关的. 
+
+\begin{theorem}
+    从同一个向量组中获得的任意两个极大线性无关组包含的向量个数相同. 
+\end{theorem}
+
+\begin{theorem}
+    向量组的秩等于极大线性无关组中包含的向量个数. 
+\end{theorem}
+
+将向量按列放，构成矩阵. 
+$$A=\begin{pmatrix}
+    a_1 & a_2 & \cdots & a_n \\
+    \vdots & \vdots & \vdots & \vdots
+\end{pmatrix}$$
+满足向量组的秩等于该矩阵的秩，且行秩等于列秩等于矩阵的秩. 
+
+\begin{example}
+    $A=\begin{pmatrix}
+        1 & 0 & 0 & 0 \\
+        0 & 1 & 0 & 0 \\
+        0 & 0 & 0 & 0 \\
+        0 & 0 & 0 & 0
+    \end{pmatrix}$，$r(A)=2$.
+\end{example}
+
+\section{正交向量组}
+
+正交即垂直，当两向量垂直时，满足$\vec a \cdot \vec b = 0$，显然零向量与任何向量都是正交的. 
+
+
+\begin{definition}
+    正交向量组: 向量组内的向量两两之间相互正交，且该正交向量组不包含零向量. 
+\end{definition}
+
+\begin{definition}
+    标准正交向量组: 满足正交向量组条件的同时，还需满足各向量长度为1. 
+\end{definition}
+
+\section{施密特正交化}
+
+\begin{definition}
+    正交化: 给定一组线性无关的向量$\alpha_1 \alpha_2 \dots \alpha_n$，求与之正交的$\beta_1 \beta_2 \dots \beta_n$称为正交化. 
+\end{definition}
+
+施密特正交化的方法为，令$\beta_1 = \alpha_1$. 
+$$\begin{aligned}
+\beta_2 =& \alpha_2 - \frac{\alpha_2\beta_1}{\beta_1\beta_1}\beta_1 \\
+\beta_3 =& \alpha_3 - \frac{\alpha_3\beta_1}{\beta_1\beta_1}\beta_1 - \frac{\alpha_3\beta_2}{\beta_2\beta_2}\beta_2 \\
+\beta_4 =& \alpha_4 - \frac{\alpha_4\beta_1}{\beta_1\beta_1}\beta_1 - \frac{\alpha_4\beta_2}{\beta_2\beta_2}\beta_2 - \frac{\alpha_4\beta_3}{\beta_3\beta_3}\beta_3 \\
+...
+\end{aligned}$$
+
+
+
+\section{求向量组的秩}
+
+\begin{theorem}
+    初等行变换不改变列向量之间的线性关系. 
+\end{theorem}
+
+根据以上性质，可以快速求得极大线性无关组以及用于表示其余向量的系数。
+给定向量的值要求向量组的秩是一种固定的题型，做题方法如下. 
+\begin{enumerate}
+    \item 无论是行向量还是列向量，均按列排行成矩阵. 
+    \item 只做初等\textbf{行}变换，转换为行简化阶梯型. 
+    \item 首非零元所在列即为极大线性无关组. 
+    \item 后面的构成元素其余向量的系数. 
+\end{enumerate}
+
+\begin{example}
+    $\begin{pmatrix}
+        1 & 2 & -2 & 3 \\
+        -2 & -4 & 4 & -6 \\
+        2 & 8 & -2 & 0 \\
+        -1 & 0 & 3 & -6
+    \end{pmatrix} \rightarrow \left ( \begin{array}{cccc}
+        1 & 0 & -3 & 6 \\
+        0 & 1 & \frac{1}{2} & -\frac{3}{2} \\ \hline
+        0 & 0 & 0 & 0 \\
+        0 & 0 & 0 & 0
+    \end{array} \right )$，注意到首非零元出现在前两列，则$\alpha_1 \alpha_2$构成极大线性无关组，其余向量用$\alpha_1 \alpha_2$表示. 
+    $$\alpha_3 = -3\alpha_1 + \frac{1}{2}\alpha_2$$
+    $$\alpha_4 = 6\alpha_1 -\frac{3}{2}\alpha_2$$
+\end{example}
+
+\subsection{线性方程组}
+
+考虑以下方程组，是否可将其转换为矩阵并对其求解. 
+$$\begin{cases}
+    x_1 + x_2 + x_3 = 1 \\
+    x_1 - x_2 - x_3 = -3 \\
+    2x_1 + 9x_2 + 10x_3 = 11
+\end{cases}$$
+在此我们需要引入\textbf{系数矩阵}$A$和\textbf{增广系数矩阵}$\overline{A}$.
+$$A=\begin{pmatrix}
+    1 & 1 & 1 \\
+    1 & -1 & -1 \\
+    2 & 9 & 10
+\end{pmatrix}$$
+$$\overline{A}=\left ( \begin{array}{ccc|c}
+    1 & 1 & 1 & 1 \\
+    1 & -1 & -1 & -3 \\
+    2 & 9 & 10 & 11
+\end{array} \right )$$
+
+解线性方程组本质上是对以上矩阵作初等变换使其转变为行简化阶梯形，进而求解$x_1 x_2 x_3$. 但我们是否有方法可以判断该线性方程组是否有解呢？答案如下. 
+
+\subsection{线性方程组解的判定}
+
+如果化简后行简化阶梯形$A=\left ( \begin{array}{ccc|c}
+    1 & 0 & 0 & 1 \\
+    0 & 1 & 0 & 2 \\
+    0 & 0 & 1 & 3
+\end{array} \right )$，可以解得$\begin{cases}
+    x_1 = 1 \\
+    x_2 = 2 \\
+    x_3 = 3
+\end{cases}$，观察该矩阵可发现，$r(A)=r(\overline{A})=3=\mbox{未知量个数}$，判定为有1解. 
+
+
+如果化简后行简化阶梯形$A=\left ( \begin{array}{ccc|c}
+    1 & 0 & 1 & 5 \\
+    0 & 1 & 1 & 9 \\
+    0 & 0 & 0 & 0
+\end{array} \right )$，可以解得$\begin{cases}
+    x_1 = 5 - x_3 \\
+    x_2 = 9 - x_3 \\
+\end{cases}$，观察该矩阵可发现，$r(A)=r(\overline{A})=2 \neq \mbox{未知量个数}$，判定为有无穷解. 
+
+
+如果化简后行简化阶梯形$A=\left ( \begin{array}{ccc|c}
+    1 & 0 & 1 & 3 \\
+    0 & 1 & 0 & 4 \\
+    0 & 0 & 0 & 1
+\end{array} \right )$，可以解得$\begin{cases}
+    x_1 + x_3 = 3 \\
+    x_2 = 4 \\
+    0 = 1
+\end{cases}$，观察该矩阵可发现，$r(A)=2 \neq r(\overline{A})=3$，判定为有无解. 
+
+
+由以上例子可见，判定线性方程组解的方法即判定$r(A)$与$r(\overline{A})$，当$r(A) = r(\overline{A})$时有解，且$r(A) = r(\overline{A}) = \mbox{未知量个数}$时有1解，$r(A) = r(\overline{A}) < \mbox{未知量个数}$时有无穷解，其余情况下无解. 
+
+解题步骤如下.
+\begin{enumerate}
+    \item 写出$\overline{A}$. 
+    \item 化为行简化阶梯型. 
+    \item 观察$r(A)$与$r(\overline{A})$. 
+\end{enumerate}
+
+\section{齐次线性方程组}
+
+齐次线性方程即方程等式左边全为未知量一次项的加和，右边为0的方程组. 
+
+\section{齐次线性方程组解的结构}
+
+\begin{theorem}
+    齐次方程必有解. 
+\end{theorem}
+
+假设某齐次线性方程组的增广矩阵为$\left ( \begin{array}{ccc|c}
+    1 & 1 & 1 & 0 \\
+    1 & -1 & -1 & 0 \\
+    2 & 0 & 4 & 0
+\end{array} \right )$，可以推断出$r(A) = r(\overline{A})$必然成立，所以齐次方程必有解. 
+
+齐次线性方程组有解，但也要分两种情况，一种是零解，对于任何齐次线性方程组都成立，只需满足
+$$r(A) = r(\overline{A}) = \mbox{未知量个数}$$
+另一种情况是有非零解，满足
+$$r(A) = r(\overline{A}) < \mbox{未知量个数}$$
+
+
+假设齐次线性方程组中方程个数为$m$，未知量个数为$n$，若$m < n$，则必然有非零解；如果$m = n$，则分为以下两种情况.
+$$\begin{cases}
+    \mbox{有非零解} \Leftrightarrow \left | A \right | = 0. \\
+    \mbox{只有零解} \Leftrightarrow \left | A \right | \neq 0 \Leftrightarrow A \mbox{可逆} \Leftrightarrow r(A) = n.
+\end{cases}$$
+
+\begin{example}
+    考虑齐次线性方程$x_1\alpha_1 + x_2\alpha_2 + \dots + x_5\alpha_5 = 0$，其中$\alpha_1 = (1,3,0,5), \alpha_2=(1,2,1,4), \alpha_3=(1,1,2,3), \alpha_4=(2,5,1,9), \alpha_5=(1,-3,6,-1)$，求该线性方程的解.
+    \newline
+    解: 方程个数为4个，未知量有5个，$5 < 4$，必然有非零解. 写出系数矩阵$$A=\begin{pmatrix}
+        1 & 1 & 1 & 2 & 1 \\
+        3 & 2 & 1 & 5 & -3 \\
+        0 & 1 & 2 & 1 & 6 \\
+        5 & 4 & 3 & 9 & -1
+    \end{pmatrix} \xrightarrow{化为行简化阶梯形} \begin{pmatrix}
+        1 & 0 & -1 & 1 & -5 \\
+        0 & 1 & 2 & 1 & 6 \\
+        0 & 0 & 0 & 0 & 0 \\
+        0 & 0 & 0 & 0 & 0
+    \end{pmatrix}$$，计算得到$$\begin{cases}
+        x_1 = x_3 - x_4 + 5x_5 \\
+        x_2 = -2x_3 - x_4 -6x_6
+    \end{cases}$$
+\end{example}
+
+\begin{theorem}
+    如果$\eta_1 \eta_2$是$Ax = 0$的解，则$\eta_1 + \eta_2$也是该方程的解，$c\eta_1 \mbox{与} c\eta_2$也是. 
+\end{theorem}
+
+针对$r(A) = r(\overline{A}) \neq \mbox{未知量个数}$的方程，我们有套固定的解法.
+
+\begin{example}
+    假设系数矩阵$A \xrightarrow{\mbox{化为行简化阶梯形}} \begin{pmatrix}
+        1 & 0 & -\frac{9}{4} & -\frac{3}{4} & \frac{1}{4} \\
+        0 & 1 & \frac{3}{4} & -\frac{7}{4} & \frac{5}{4} \\
+        0 & 0 & 0 & 0 & 0
+    \end{pmatrix}$，解得$$\begin{cases}
+        x_1=\frac{9}{4}x_3 + \frac{3}{4}x_4 - \frac{1}{4}x_5 \\
+        x_2=-\frac{3}{4}x_3 + \frac{7}{4}x_4 - \frac{5}{4}x_5
+    \end{cases}$$，我们将$x_3,x_4,x_5$称为自由未知量，分别令$\begin{pmatrix}
+        x_3 \\ x_4 \\ x_5
+    \end{pmatrix} = \begin{pmatrix}
+        1 \\ 0 \\ 0
+    \end{pmatrix} \begin{pmatrix}
+        0 \\ 1 \\ 0
+    \end{pmatrix} \begin{pmatrix}
+        0 \\ 0 \\ 1
+    \end{pmatrix}$代入得到$$\eta_1 = \begin{pmatrix}
+        \frac{9}{4} \\ -\frac{3}{4} \\ 1 \\ 0 \\ 0
+    \end{pmatrix}, \eta_2 = \begin{pmatrix}
+        \frac{3}{4} \\ \frac{7}{4} \\ 0 \\ 1 \\ 0
+    \end{pmatrix}, \eta_3 = \begin{pmatrix}
+        -\frac{1}{4} \\ -\frac{5}{4} \\ 0 \\ 0 \\ 1
+    \end{pmatrix}$$
+\end{example}
+
+计算得到的$\eta_1, \eta_2, \eta_3$称为基础解系，其线性组合构成该方程的所有解，且基础解系是线性无关的. 
+
+\section{非齐次线性方程组解的结构}
+
+非齐次线性方程形如$Ax = b$，去除常数得到$Ax = 0$，称为$Ax = b$的\textbf{导出组}. 
+首先不说怎么解非齐次线性方程组，先认识一下非齐次线性方程组解的性质. 
+
+\begin{quolity}
+    若$\alpha_1 \alpha_2 \dots \alpha_s$是$Ax=b$的解，则任意$\alpha$相加减仍为该方程的解. 
+\end{quolity}
+
+\begin{quolity}
+    若$\alpha_0$是$Ax=b$的解，$\eta$是$Ax=0$的解，则$\alpha_0+\eta$是$Ax=b$的解. 
+\end{quolity}
+
+\begin{quolity}
+    若$\alpha_0$是$Ax=b$的解，该解称为特解，而$\eta$是$Ax=0$的通解. 
+    其中$\eta = c_1\eta_1 + c_2\eta_2 + \dots + c_{n-r}\eta_{n-r} + \alpha_0$是非齐次线性方程组的全解. 
+\end{quolity}
+
+\begin{example}
+    求$\overline{A} = \left ( \begin{array}{cccc|c}
+        1 & 5 & -1 & -1 & -1 \\
+        1 & -2 & 1 & 3 & 3 \\
+        3 & 8 & -1 & 1 & 1 \\
+        1 & -9 & 3 & 7 & 7
+    \end{array} \right )$的一个特解和通解. 
+    \newline
+    解: $\overline{A} = \left ( \begin{array}{cccc|c}
+        1 & 5 & -1 & -1 & -1 \\
+        1 & -2 & 1 & 3 & 3 \\
+        3 & 8 & -1 & 1 & 1 \\
+        1 & -9 & 3 & 7 & 7
+    \end{array} \right ) \xrightarrow{\mbox{行简化阶梯形}} \left ( \begin{array}{cccc|c}
+        1 & 0 & \frac{3}{7} & \frac{13}{7} & \frac{13}{7} \\
+        0 & 1 & -\frac{3}{7} & -\frac{4}{7} & -\frac{7}{4} \\
+        0 & 0 & 0 & 0 & 0 \\
+        0 & 0 & 0 & 0 & 0
+    \end{array} \right )$，解得$\begin{cases}
+        x_1 = \frac{13}{7} - \frac{3}{7}x_3 - \frac{13}{7}x_4 \\
+        x_2 = -\frac{4}{7} + \frac{2}{7}x_3 + \frac{4}{7}x_4
+    \end{cases}$，$x_3,x_4$均为自由变量，取$x_3=0,x_4=0$得到一个特解$\alpha_0=\begin{pmatrix}
+        \frac{13}{7} \\ -\frac{4}{7} \\ 0 \\ 0
+    \end{pmatrix}$
+    \newline
+    另常数为0得到$\overline{A}$的导出组$\begin{pmatrix}
+        1 & 5 & -1 & -1 \\
+        1 & -2 & 1 & 3 \\
+        3 & 8 & -1 & 1 \\
+        1 & -9 & 3 & 7
+    \end{pmatrix}$，行简化阶梯形与上式相同，解得$\begin{cases}
+        x_1 = \frac{3}{7}x_3 - \frac{13}{7}x_4 \\
+        x_2 = \frac{2}{7}x_3 + \frac{4}{7}x_4
+    \end{cases}$，只需要$\begin{pmatrix}
+        x_3 \\ x_4
+    \end{pmatrix}$取$\begin{pmatrix}
+        1 \\ 0
+    \end{pmatrix} \begin{pmatrix}
+        0 \\ 1
+    \end{pmatrix}$代入即可得到通解$\eta_1, \eta_2$. 
+\end{example}
+
+\chapter{矩阵的特征值和特征向量}
+
+\section{特征值与特征向量的定义}
+
+\begin{definition}
+    设$A$为$n$阶方阵，若存在$\lambda$与向量$\alpha$使得$A\alpha = \lambda\alpha$成立，则称$\lambda$为矩阵$A$的特征值，$\alpha$为矩阵的特征向量. 
+    其中$\lambda$可为0，而$\alpha \neq 0$. 
+\end{definition}
+
+这是一件很神奇的事情，矩阵与向量的乘积居然等于一个数与向量的乘积. 特征值和特征向量有很多有趣的性质，将会在后面一一介绍. 
+
+
+特征值与特征向量的定义$A\alpha = \lambda\alpha$出发，我们可以作如下变形. 
+$$\lambda\alpha - A\alpha = 0 \xrightarrow{\mbox{公因子$\alpha$}} (\lambda - A)\alpha = 0 \xrightarrow[\mbox{故补上$E$}]{\mbox{$\lambda$无法减去矩阵}} (\lambda E - A)\alpha = 0$$
+两边同时取行列式得到$\left | \lambda E - A \right |\alpha = 0$，其中$\left | \lambda E - A \right |$称为特征根，因为$\alpha \neq 0$，所以要使$\left | \lambda E - A \right |=0$. 
+
+\section{特征值与特征向量的性质}
+
+\begin{quolity}
+    若$\lambda$是$A$的特征值，$\alpha$是$\lambda$对应的特征向量，则$c\alpha$也是$\lambda$的特征向量.     
+\end{quolity}
+
+\begin{quolity}
+    若$\alpha_1, \alpha_2$是$\lambda$的特征向量，则$c_1\alpha_1 + c_2\alpha_2$也是$\lambda$的特征向量. 
+\end{quolity}
+
+\begin{quolity}
+    $A$与$A^T$具有相同的特征值. 
+    \newline
+    $\left | \lambda E - A^T \right | = \left | \lambda E^T - A^T \right | = \left | (\lambda E - A)^T \right | = \left | \lambda E - A \right |$
+\end{quolity}
+
+\begin{quolity}
+    $$\sum_{i=1}^m a_{ij} < 1, \mbox{j取1,2,\dots,n} \mbox{且} \sum_{j=1}^n a_{ij} < 1, \mbox{i取1,2,\dots,m} \Leftrightarrow \left | \lambda_k \right | < 1$$
+\end{quolity}
+
+\begin{quolity}
+    所有特征值$\lambda_1, \lambda_2, \dots, \lambda_n$之\textbf{和}为$\sum a_{ii}$，即主对角线元素之和，记作$tr(A)$. 
+\end{quolity}
+
+\begin{quolity}
+    所有特征值$\lambda_1, \lambda_2, \dots, \lambda_n$之\textbf{积}为$\left | A \right |$. 
+\end{quolity}
+
+计算主对角线元素之和的运算称为\textbf{迹运算}，记作$tr(A)$. 
+
+
+可以证明$n$阶方阵互不相同的特征值$\lambda_1, \lambda_2, \dots, \lambda_m$对应的特征向量$\alpha_1, \alpha_2, \dots, \alpha_m$是线性无关的. 
+$k$重特征根对应的线性无关的特征向量个数$\le k$. 
+
+\begin{quolity}
+    $kA$的特征值为$k \lambda$，$A^n$的特征值为$k^n$. 
+\end{quolity}
+
+\begin{quolity}
+    $A^{-1}$的特征值为$\frac{1}{k}$. 
+\end{quolity}
+
+\begin{quolity}
+    $A^*$的特征值为$\frac{1}{k} \left | A \right |$. 
+\end{quolity}
+
+以上性质可由基本定义$A \alpha = \lambda \alpha$出发从而证明. 
+
+\section{相似矩阵及可对角化条件}
+
+\subsection{相似矩阵的定义}
+
+\begin{definition}
+    $A,B$为$n$阶方阵，若存在$n$阶可逆$P$，使得$P^{-1}AP=B$，则称$A$相似于$B$，记作$A \sim B$. 
+\end{definition}
+
+\subsection{相似矩阵的性质}
+
+\begin{quolity}
+    反身性: $A \sim A$. 
+\end{quolity}
+
+单位方阵$E$可逆，满足$E^{-1}AE=A$，因此$A \sim A$. 
+
+\begin{quolity}
+    对称性: $A \sim B \Leftrightarrow B \sim A$. 
+\end{quolity}
+
+\begin{quolity}
+    传递性: $A \sim B, B \sim C \Rightarrow A \sim C, C \sim A$. 
+\end{quolity}
+
+若$A,B$相似，则它们的特征值、行列式与秩均相同，若$A$是可逆的，则可推出$B$也可逆，反之亦然，因为它们的行列式相同. 
+对$A,B$做相同的幂运算不改变$A$与$B$的相似关系，即满足$A^m \sim B^m$，$m=-1$时，也满足$A^{-1} \sim B^{-1}$. 
+
+\subsection{相似矩阵与对角形矩阵}
+
+若对于n阶矩阵$A$，存在可逆$P$，使得$P^{-1}AP = \Lambda$，其中$\Lambda=\begin{pmatrix}
+    \lambda_1 & 0 & \cdots & 0 \\
+    0 & \lambda_2 & \cdots & 0 \\
+    \vdots & \vdots & \ddots & \vdots \\
+    0 & 0 & 0 & \lambda_n
+\end{pmatrix}$，则矩阵$A$是可对角化的. 
+
+\begin{theorem}
+    $A\mbox{相似于}\Lambda \Leftrightarrow \mbox{$A$有$n$个线性无关的特征向量}$. 
+\end{theorem}
+
+\begin{corollary}
+    $A \mbox{有} n \mbox{个互异的特征根} \Rightarrow A \sim \Lambda = \begin{pmatrix}
+        \lambda_1 & 0 & \cdots & 0 \\
+        0 & \lambda_2 & \cdots & 0 \\
+        \vdots & \vdots & \ddots & \vdots \\
+        0 & 0 & 0 & \lambda_n
+    \end{pmatrix}$
+\end{corollary}
+
+\begin{theorem}
+    $A \sim \Lambda \Leftrightarrow r_i \mbox{重根的基础解系有} r_i \mbox{个}$. 
+\end{theorem}
+
+\section{正交矩阵}
+
+\begin{definition}
+    若$n$阶方阵满足$AA^T = E$，则$A$为正交矩阵. 
+\end{definition}
+
+\begin{quolity}
+    $A$正交，则$|A|=1 \mbox{或} -1$. 
+\end{quolity}
+
+\begin{quolity}
+    $A$正交，则$A^{-1} = A^T$，且$A^{-1}$与$A^T$均正交. 
+\end{quolity}
+
+\begin{quolity}
+    $A,B$是正交方阵，则$AB$也正交. 
+\end{quolity}
+
+\begin{theorem}
+    $A\mbox{正交} \Leftrightarrow A\mbox{的列向量与行向量均为标准正交向量组}$. 
+\end{theorem}
+
+\section{实对称矩阵的对角化}
+
+\begin{theorem}
+    实对称矩阵$A$的不同特征值对应的特征向量正交. 
+\end{theorem}
+
+\begin{definition}
+    正交相似: $A,B$同阶，存在可逆$P$，使得$P^{-1}AP = B$. 
+\end{definition}
+
+若给定实对称矩阵$A$，要求正交矩阵$Q$，满足$Q^{-1}AQ=\Lambda$，步骤如下. 
+
+\begin{enumerate}
+    \item 求特征值. 
+    \item 求特征向量. 
+    \item 特征向量正交化单位化. 
+    \item 做成列向量构成矩阵$Q$. 
+\end{enumerate}
+
+\section{二次型}
+
+\begin{definition}
+    形如: $x^2 + xy + y^2$，$x_1^2 + 2x_1x_2 + x_2^2$的表达式称为二次型，其中$x_n^2$称为平方项，$xy$称为交叉项. 
+\end{definition}
+
+题型: 给定二次型，将其化为矩阵表达式. 
+
+\begin{example}
+    $x_1^2 + 2x_1x_2 + x_2^2 - x_2x_3 + 2x_3^2 - 2x_1x_3$. 
+    \newline
+    解: 先提取出平方项，有$x_1^2, x_2^2, 2x_3^2$，将其按照$x$的下标摆放在主对角线上. 
+    $$\begin{pmatrix}
+        1 &   &   \\
+          & 1 &   \\
+          &   & 2 \\
+    \end{pmatrix}$$
+    再提取出交叉项，有$2x_1x_2,-x_2x_3,-2x_1x_3$，将系数除以2后，摆放在矩阵的对称位置上，如$2x_1x_2$，在矩阵的第1行第2个以及第2行第1个摆放系数的一半1. 
+    $$\begin{pmatrix}
+        1 & 1 & -1 \\
+        1 & 1 & -\frac{1}{2} \\
+        -1 & -\frac{1}{2} & 2
+    \end{pmatrix}$$
+    原表达式为如下. 
+    $$\begin{pmatrix}
+        x_1 & x_2 & x_3
+    \end{pmatrix} \begin{pmatrix}
+        1 & 1 & -1 \\
+        1 & 1 & -\frac{1}{2} \\
+        -1 & -\frac{1}{2} & 2
+    \end{pmatrix} \begin{pmatrix}
+        x_1 \\ x_2 \\ x_3
+    \end{pmatrix}$$
+\end{example}
+
+\subsection{标准形}
+
+\begin{definition}
+    标准形: $d_1y_1^2 + d_2y_2^2 + \dots + d_ny_n^2$，$d_i \in \mathbb{R}$. 
+\end{definition}
+
+\section{合同}
+
+\begin{definition}
+    合同: 若$A,B$为$n$阶方阵，存在\textbf{可逆}$C$使得$C^{-1}AC = B$，则$A,B$合同，记作$A \backsimeq B$. 
+\end{definition}
+
+\subsection{合同的性质}
+
+\begin{quolity}
+    反身性: $A \backsimeq A$
+\end{quolity}
+
+\begin{quolity}
+    对称性: $A \backsimeq B \Leftrightarrow B \backsimeq A$. 
+\end{quolity}
+
+\begin{quolity}
+    传递性: $A \backsimeq B, B \backsimeq C \Rightarrow A \backsimeq C$. 
+\end{quolity}
+
+假设$A,B$是合同的，满足以下性质. 
+
+\begin{quolity}
+    $r(A) = r(B)$，$A$左乘或右乘可逆$P$，$r(A)$不变. 
+\end{quolity}
+
+\begin{quolity}
+    $A^T = A \Leftrightarrow B^T = B$，即$A,B$只要有一个对称，则另一个必然对称. 
+\end{quolity}
+
+\begin{quolity}
+    $A,B\mbox{可逆} \Leftrightarrow A^{-1} \backsimeq B^{-1}$. 
+\end{quolity}
+
+\begin{quolity}
+    $A^T \backsimeq B^T$. 
+\end{quolity}
+
+\section{二次型化为标准形}
+
+化二次形为标准形有三种方法: \textbf{配方法}、\textbf{初等替换}、\textbf{正交替换}. 
+
+\subsection{配方法}
+
+\begin{example}
+    配方法: $x_1^2 - 3x_2^2 + 4x_3^2 - 2x_1x_3 - 6x_2x_3$. 
+    \newline
+    解: $$\begin{aligned}
+        \mbox{原式} =& x_1^2 - 2x_1(x_2-x_3)  - 3x_2 + 4x_3^2 - 6x_2x_3 + (x_2 - x_3)^2 -(x_2 - x_3)^2 \\
+        =& (x_1 - x_2 + x_3)^2 -4x_2^2 - 4x_2x_3
+    \end{aligned}$$
+    写出非退化替换公式. 
+    $$\begin{cases}
+        y_1 = x_1 - x_2 + x_3 \\
+        y_2 = 2x_2 + x_3 \\
+        y_3 = x_3
+    \end{cases}$$
+    最后反解出$x_1,x_2,x_3$关于$y_1,y_2,y_3$的表达式即可. 
+\end{example}
+
+\subsection{初等变换法}
+
+$f(X) = X^TAX$，使$X=cY$，则有$C^TAC=\Lambda$，$C$是可逆矩阵，则$C=P_1P_2\cdots P_s$($P$为初等矩阵). 
+$$(P_1P_2 \cdots P_s)^TAP_1P_2 \cdots P_s = \Lambda$$
+$$EP_1P_2 \cdots P_s = C$$
+根据以上两条公式，我们只需要将$A$与$E$写到一块，做一系列初等变换，当$A$化为$E$时，原本的$E$化为了$C$. 
+
+\begin{example}
+    将$A=\begin{pmatrix}
+        1 & 1 & 1 \\
+        1 & 2 & 2 \\
+        1 & 2 & 1
+    \end{pmatrix}$对角化. 
+    \newline
+    解: $$\begin{aligned}
+        \begin{pmatrix}
+            A \\ E
+        \end{pmatrix} &= \left ( \begin{array}{ccc}
+            1 & 1 & 1 \\
+            1 & 2 & 2 \\
+            1 & 2 & 1 \\ \hline
+            1 & 0 & 0 \\
+            0 & 1 & 0 \\
+            0 & 0 & 1
+        \end{array} \right ) \\
+        &= \left ( \begin{array}{ccc}
+            1 & 1 & 1 \\
+            1 & 2 & 2 \\
+            1 & 2 & 1 \\ \hline
+            1 & 0 & 0 \\
+            0 & 1 & 0 \\
+            0 & 0 & 1
+        \end{array} \right ) = \left ( \begin{array}{ccc}
+            1 & 0 & 1 \\
+            1 & 1 & 2 \\
+            1 & 1 & 1 \\ \hline
+            1 & -1 & 0 \\
+            0 & 1 & 0 \\
+            0 & 0 & 1
+        \end{array} \right ) = \left ( \begin{array}{ccc}
+            1 & 0 & 1 \\
+            0 & 1 & 1 \\
+            1 & 1 & 1 \\ \hline
+            1 & -1 & 0 \\
+            0 & 1 & 0 \\
+            0 & 0 & 1
+        \end{array} \right ) \\
+        &= \left ( \begin{array}{ccc}
+            1 & 0 & 0 \\
+            0 & 1 & 1 \\
+            1 & 1 & 0 \\ \hline
+            1 & -1 & -1 \\
+            0 & 1 & 0 \\
+            0 & 0 & 1
+        \end{array} \right ) = \left ( \begin{array}{ccc}
+            1 & 0 & 0 \\
+            0 & 1 & 1 \\
+            0 & 1 & 0 \\ \hline
+            1 & -1 & -1 \\
+            0 & 1 & 0 \\
+            0 & 0 & 1
+        \end{array} \right ) = \left ( \begin{array}{ccc}
+            1 & 0 & 0 \\
+            0 & 1 & 0 \\
+            0 & 1 & -1 \\ \hline
+            1 & -1 & 0 \\
+            0 & 1 & -1 \\
+            0 & 0 & 0
+        \end{array} \right ) \\
+        &= \left ( \begin{array}{ccc}
+            1 & 0 & 0 \\
+            0 & 1 & 0 \\
+            0 & 1 & -1 \\ \hline
+            1 & -1 & 0 \\
+            0 & 1 & -1 \\
+            0 & 0 & 1
+        \end{array} \right ) = \begin{pmatrix}
+            \Lambda \\ C
+        \end{pmatrix}
+    \end{aligned}$$
+\end{example}
+
+\subsection{正交替换}
+
+\begin{enumerate}
+    \item 求出特征值$\lambda_1, \lambda_2, \dots, \lambda_n$. 
+    \item 求特征值对应的特征向量，并施密特正交化以及单位化. 
+    \item $C=(\alpha_1 \alpha_2 \dots \alpha_n)$，$\Lambda=\begin{pmatrix}
+        \lambda_1 & 0          & \cdots & 0 \\
+        0         & \lambda_2  & \cdots & 0 \\
+        \vdots    & \vdots     & \ddots & \vdots \\
+        0         & 0 & \cdots & \lambda_n
+    \end{pmatrix}$
+\end{enumerate}
+
+\section{规范型}
+
+\begin{definition}
+    规范型: $y_1^2 + \dots + y_p^2 - y_{p+1}^2 - \dots - y_r^2$. 
+\end{definition}
+
+任意二次型矩阵与$\begin{pmatrix}
+    1 \\
+     & \ddots \\
+     &  & 1 \\
+     &  &  & -1 \\
+     &  &  &  & \ddots \\
+     &  &  &  &  & -1 \\
+     &  &  &  &  &  & 0 \\
+     &  &  &  &  &  &  & \ddots \\
+     &  &  &  &  &  &  &  & 0
+\end{pmatrix}$合同. 
+
+\end{document}
